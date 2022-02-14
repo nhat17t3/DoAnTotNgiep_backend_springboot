@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +25,6 @@ import shop.service.FilesStorageService;
 
 @RestController
 @RequestMapping("/api")
-//@CrossOrigin("http://localhost:8080")
 public class BrandController {
 
 //	@Value("${upload.path}")
@@ -41,6 +39,12 @@ public class BrandController {
 	@GetMapping("/brands")
 	public ResponseEntity<ResponseObject> getListBrand() {
 		List<Brand> listBrand = brandService.findAll();
+		
+		for (Brand brand : listBrand) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(brand.getImage())
+					.toUriString();
+			brand.setImage(fileDownloadUri);
+		}
 		ResponseObject resposeObject = new ResponseObject("success", " findAll brand", listBrand);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -54,7 +58,7 @@ public class BrandController {
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(brand.getImage())
 				.toUriString();
 		brand.setImage(fileDownloadUri);
-		ResponseObject resposeObject = new ResponseObject("success", "find brand by id sucess", brand);
+		ResponseObject resposeObject = new ResponseObject("success", "find brand by id success", brand);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -62,15 +66,23 @@ public class BrandController {
 	public ResponseEntity<ResponseObject> createBrand(@RequestParam String name, @RequestParam String slug,
 			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
 
-		String fileName = storageService.save(image);
+		String fileName ;
+		try {
+			fileName = storageService.save(image);
+			
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
+		
 		
 		Brand brand = new Brand(name, slug, null, isActive);
 		brand.setImage(fileName);
 		brand.setCreatedAt(LocalDateTime.now());
 		Brand newBrand = brandService.save(brand);
-		ResponseObject resposeObject = new ResponseObject("success", "create brand sucess", newBrand);
+		ResponseObject resposeObject = new ResponseObject("success", "create brand success", newBrand);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
@@ -82,7 +94,14 @@ public class BrandController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		String fileName = storageService.save(image);
+		String fileName ;
+		try {
+			fileName = storageService.save(image);
+			
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 
@@ -94,7 +113,7 @@ public class BrandController {
 		brand.setUpdatedAt(time);
 
 		Brand updateItem = brandService.save(brand);
-		ResponseObject resposeObject = new ResponseObject("success", "update brand sucess", updateItem);
+		ResponseObject resposeObject = new ResponseObject("success", "update brand success", updateItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -105,7 +124,7 @@ public class BrandController {
 			return ResponseEntity.notFound().build();
 		}
 		brandService.delete(id);
-		ResponseObject resposeObject = new ResponseObject("success", "delete brand sucess", "");
+		ResponseObject resposeObject = new ResponseObject("success", "delete brand success", "");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 

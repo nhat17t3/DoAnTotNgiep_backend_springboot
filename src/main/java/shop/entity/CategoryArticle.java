@@ -14,8 +14,9 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "brand")
-public class Brand {
+@Table(name = "category_article")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class CategoryArticle {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +28,6 @@ public class Brand {
 	@Column
 	private String slug;
 
-	@Column(name = "image")
-	private String image;
-
 	@Column(name = "is_active")
 	private boolean isActive;
 
@@ -38,30 +36,38 @@ public class Brand {
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-	
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "brand"  )
-	private Set<Product> products;
-	
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "categoryArticle")
+	private Set<Article> articles;
+	
+	
 //	Constructor
-	public Brand() {
+	public CategoryArticle() {
 		super();
 	}
 
-	public Brand(String name, String slug, String image, boolean isActive) {
+	public CategoryArticle(String name, String slug, boolean isActive, LocalDateTime createdAt) {
 		super();
 		this.name = name;
 		this.slug = slug;
-		this.image = image;
 		this.isActive = isActive;
+		this.createdAt = createdAt;
 	}
 
-	// getter and setter
+//	getter and setter
+	public Set<Article> getArticles() {
+		return articles;
+	}
+	
+	public void setArticles(Set<Article> articles) {
+		this.articles = articles;
+	}
+	
 	public int getId() {
 		return id;
 	}
+
 
 	public void setId(int id) {
 		this.id = id;
@@ -82,17 +88,6 @@ public class Brand {
 	public void setSlug(String slug) {
 		this.slug = slug;
 	}
-
-
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
 
 	public boolean getIsActive() {
 		return isActive;
@@ -117,15 +112,5 @@ public class Brand {
 	public void setUpdatedAt(LocalDateTime time) {
 		this.updatedAt = time;
 	}
-
-	public Set<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(Set<Product> products) {
-		this.products = products;
-	}
-	
-	
 
 }

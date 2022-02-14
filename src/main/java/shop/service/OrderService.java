@@ -1,0 +1,29 @@
+package shop.service;
+
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+
+import shop.entity.Order;
+
+public interface OrderService {
+
+	List<Order> findAll();
+
+	Order findById(int id);
+
+	Order save(Order brand);
+
+	void delete(int id);
+	
+//	bo sung them
+
+	List<Order> findAllPage(Pageable pageable);
+
+	List<Order> findAllByNameOrPhoneReceiver(String key, Pageable pageable);
+
+	List<Order> findAllByUserId(int userID, Pageable pageable);
+
+	List<Order> findAllByStatus(int status, Pageable pageable);
+
+}

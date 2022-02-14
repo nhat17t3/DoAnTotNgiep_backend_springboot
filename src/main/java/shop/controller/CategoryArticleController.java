@@ -16,81 +16,73 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import shop.DTO.ResponseObject;
-import shop.entity.Category;
-import shop.service.CategoryService;
+import shop.entity.CategoryArticle;
+import shop.service.CategoryArticleService;
 
 @RestController
 @RequestMapping("/api")
-public class CategoryController {
+public class CategoryArticleController {
 
 	@Autowired
-	CategoryService categoryService;
+	CategoryArticleService categoryArticleService;
 
-	@GetMapping("/categories")
-	public ResponseEntity<ResponseObject> getListCategory() {
-		List<Category> listCate = categoryService.findAll();
-//		if (listCate.isEmpty()) {
+	@GetMapping("/cate_articles")
+	public ResponseEntity<ResponseObject> getListCategoryArticle() {
+		List<CategoryArticle> list = categoryArticleService.findAll();
+//		if (list.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
-		ResponseObject resposeObject = new ResponseObject("success", "find all category success", listCate);
+		ResponseObject resposeObject = new ResponseObject("success", "find all CategoryArticle success", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
-	@GetMapping("/categories/{id}")
-	public ResponseEntity<ResponseObject> getCategoryById(@PathVariable(value = "id") int id) {
-		Category cate = categoryService.findById(id);
-		if (cate == null) {
+	@GetMapping("/cate_articles/{id}")
+	public ResponseEntity<ResponseObject> getCategoryArticleById(@PathVariable(value = "id") int id) {
+		CategoryArticle item = categoryArticleService.findById(id);
+		if (item == null) {
 			return ResponseEntity.notFound().build();
 		}
-		ResponseObject resposeObject = new ResponseObject("success", "find categoty by id success", cate);
+		ResponseObject resposeObject = new ResponseObject("success", "find CategoryArticle by id success", item);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
-	@PostMapping("/categories")
-	public ResponseEntity<ResponseObject> createCategory(@RequestBody Category form) {
-		Category cate = new Category();
-
-		cate.setName(form.getName());
-		cate.setSlug(form.getSlug());
-		cate.setParentId(form.getParentId());
-		cate.setIsActive(form.getIsActive());
-		cate.setCreatedAt(LocalDateTime.now());
-		Category newCate = categoryService.save(cate);
-		ResponseObject resposeObject = new ResponseObject("success", "create categoty success", newCate);
+	@PostMapping("/cate_articles")
+	public ResponseEntity<ResponseObject> createCategoryArticle(@RequestBody CategoryArticle form) {
+		CategoryArticle item = new CategoryArticle(form.getName(), form.getSlug(), form.getIsActive(), LocalDateTime.now());
+		CategoryArticle newItem = categoryArticleService.save(item);
+		ResponseObject resposeObject = new ResponseObject("success", "create CategoryArticle success", newItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
-	@PutMapping("/categories/{id}")
-	public ResponseEntity<ResponseObject> updateCategory(@PathVariable(value = "id") int id,
-			@RequestBody Category form) {
-		Category cate = categoryService.findById(id);
-		if (cate == null) {
+	@PutMapping("/cate_articles/{id}")
+	public ResponseEntity<ResponseObject> updateCategoryArticle(@PathVariable(value = "id") int id,
+			@RequestBody CategoryArticle form) {
+		CategoryArticle item = categoryArticleService.findById(id);
+		if (item == null) {
 			return ResponseEntity.notFound().build();
 		}
 
-		cate.setName(form.getName());
-		cate.setSlug(form.getSlug());
-		cate.setParentId(form.getParentId());
-		cate.setIsActive(form.getIsActive());
-		LocalDateTime time = LocalDateTime.now();
-		cate.setUpdatedAt(time);
+		item.setName(form.getName());
+		item.setSlug(form.getSlug());
+		item.setIsActive(form.getIsActive());
+		item.setUpdatedAt(LocalDateTime.now());
 
-		Category updateCate = categoryService.save(cate);
-		ResponseObject resposeObject = new ResponseObject("success", "update categoty success", updateCate);
+		CategoryArticle updateItem = categoryArticleService.save(item);
+		ResponseObject resposeObject = new ResponseObject("success", "update CategoryArticle success", updateItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/categories/{id}")
-	public ResponseEntity<ResponseObject> deleteCategory(@PathVariable(value = "id") int id) {
-		Category cate = categoryService.findById(id);
-		if (cate == null) {
+	@DeleteMapping("/cate_articles/{id}")
+	public ResponseEntity<ResponseObject> deleteCategoryArticle(@PathVariable(value = "id") int id) {
+		CategoryArticle item = categoryArticleService.findById(id);
+		if (item == null) {
 			return ResponseEntity.notFound().build();
 		}
-		categoryService.delete(id);
-		ResponseObject resposeObject = new ResponseObject("success", "delete categoty success", "");
+		categoryArticleService.delete(id);
+		ResponseObject resposeObject = new ResponseObject("success", "delete CategoryArticle success", "");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
-
+//
 //	@GetMapping("/categories/search")
 //	public ResponseEntity<ResponseObject> searchCategoryByNamePage(@RequestParam(value = "q", required = true) String q,
 //			@RequestParam(value = "limit", required = false) int limit,
@@ -103,7 +95,7 @@ public class CategoryController {
 //		ResponseObject resposeObject = new ResponseObject("success", "search category by name  ", listCate);
 //		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 //	}
-
+//
 //	@GetMapping("/categories")
 //	public ResponseEntity<ResponseObject> getListCategoryPage(@RequestParam(value = "limit", required = true) int limit,
 //			@RequestParam(value = "page", required = true) int page) {

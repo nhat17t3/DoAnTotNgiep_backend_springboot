@@ -51,7 +51,7 @@ public class FeedbackController {
 		Feedback item = new Feedback(form.getTitle(), form.getContent(), form.getName(), form.getEmail(),
 				form.getPhone(), false, LocalDateTime.now());
 		Feedback newItem = feedbackService.save(item);
-		ResponseObject resposeObject = new ResponseObject("success", "create Transporter success", newItem);
+		ResponseObject resposeObject = new ResponseObject("success", "create Feedback success", newItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 

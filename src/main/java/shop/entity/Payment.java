@@ -1,13 +1,17 @@
 package shop.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "payment")
@@ -31,6 +35,10 @@ public class Payment {
 
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "payment" )
+	private Set<Order> orders;
 
 //	Constructor
 	public Payment() {
@@ -94,4 +102,13 @@ public class Payment {
 		this.updatedAt = time;
 	}
 
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
+	}
+
+	
 }

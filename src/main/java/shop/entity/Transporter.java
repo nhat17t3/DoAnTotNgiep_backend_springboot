@@ -1,13 +1,17 @@
 package shop.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "transporter")
@@ -32,22 +36,22 @@ public class Transporter {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "transporter")
+	private Set<Transport> transports;
+
 //	Constructor
 	public Transporter() {
 		super();
 	}
 
-	
-
 	public Transporter(String name, String link, boolean isActive, LocalDateTime createdAt) {
-	super();
-	this.name = name;
-	this.link = link;
-	this.isActive = isActive;
-	this.createdAt = createdAt;
-}
-
-
+		super();
+		this.name = name;
+		this.link = link;
+		this.isActive = isActive;
+		this.createdAt = createdAt;
+	}
 
 	// getter and setter
 	public int getId() {
@@ -96,6 +100,14 @@ public class Transporter {
 
 	public void setUpdatedAt(LocalDateTime time) {
 		this.updatedAt = time;
+	}
+
+	public Set<Transport> getTransports() {
+		return transports;
+	}
+
+	public void setTransports(Set<Transport> transports) {
+		this.transports = transports;
 	}
 
 }

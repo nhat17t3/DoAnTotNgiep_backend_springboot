@@ -1,20 +1,26 @@
 package shop.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "category")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Category {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY )
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	@Column
@@ -35,32 +41,22 @@ public class Category {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+	@JsonIgnore
+	@ManyToMany(mappedBy = "categories", cascade = { CascadeType.PERSIST})
+	private Set<Product> products;
+
 //	Constructor
 	public Category() {
 		super();
 	}
 
-
-
-
-
-
-
-
-public Category(String name, String slug, int parentId, boolean isActive) {
-	super();
-	this.name = name;
-	this.slug = slug;
-	this.parentId = parentId;
-	this.isActive = isActive;
-}
-
-
-
-
-
-
-
+	public Category(String name, String slug, int parentId, boolean isActive) {
+		super();
+		this.name = name;
+		this.slug = slug;
+		this.parentId = parentId;
+		this.isActive = isActive;
+	}
 
 //	getter and setter
 	public int getId() {
@@ -118,5 +114,15 @@ public Category(String name, String slug, int parentId, boolean isActive) {
 	public void setUpdatedAt(LocalDateTime time) {
 		this.updatedAt = time;
 	}
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
+	}
+	
+	
 
 }

@@ -40,6 +40,11 @@ public class SlideController {
 	@GetMapping("/slides")
 	public ResponseEntity<ResponseObject> getListSlide() {
 		List<Slide> list = slideService.findAll();
+		for (Slide slide : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(slide.getImage())
+					.toUriString();
+			slide.setImage(fileDownloadUri);
+		}
 		ResponseObject resposeObject = new ResponseObject("success", " findAll slide", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -53,7 +58,7 @@ public class SlideController {
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(slide.getImage())
 				.toUriString();
 		slide.setImage(fileDownloadUri);
-		ResponseObject resposeObject = new ResponseObject("success", "find slide by id sucess", slide);
+		ResponseObject resposeObject = new ResponseObject("success", "find slide by id success", slide);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -61,13 +66,28 @@ public class SlideController {
 	public ResponseEntity<ResponseObject> createSlide(@RequestParam String name, 
 			@RequestParam MultipartFile image,@RequestParam int sort,@RequestParam String link, @RequestParam boolean isActive) throws IOException {
 
-		String fileName = storageService.save(image);
+		String fileName ;
+		try {
+			fileName = storageService.save(image);
+			
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create slide", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 		
-		Slide slide = new Slide(name, fileName, sort, link , isActive,LocalDateTime.now());
+		Slide slide = new Slide();
+
+		slide.setName(name);
+		slide.setImage(fileName);
+		slide.setSort(sort);
+		slide.setLink(link);
+		slide.setIsActive(isActive);
+		slide.setCreatedAt(LocalDateTime.now());
+		
 		Slide newSlide = slideService.save(slide);
-		ResponseObject resposeObject = new ResponseObject("success", "create brand sucess", newSlide);
+		ResponseObject resposeObject = new ResponseObject("success", "create slide success", newSlide);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
@@ -79,7 +99,14 @@ public class SlideController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		String fileName = storageService.save(image);
+		String fileName ;
+		try {
+			fileName = storageService.save(image);
+			
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create slide", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 
@@ -103,7 +130,7 @@ public class SlideController {
 			return ResponseEntity.notFound().build();
 		}
 		slideService.delete(id);
-		ResponseObject resposeObject = new ResponseObject("success", "delete slide success", "");
+		ResponseObject resposeObject = new ResponseObject("success", "delete slide success","");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
