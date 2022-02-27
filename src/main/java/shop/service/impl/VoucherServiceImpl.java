@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import shop.entity.Voucher;
@@ -39,6 +40,24 @@ public class VoucherServiceImpl implements VoucherService{
 	public void delete(int id) {
 		voucherRepository.deleteById(id);
 		
+	}
+
+	@Override
+	public List<Voucher> findAllPage(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return voucherRepository.findAllPage(pageable);
+	}
+
+	@Override
+	public List<Voucher> searchByCode(String key, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return voucherRepository.searchByCode(key, pageable);
+	}
+
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return voucherRepository.count();
 	}
 
 

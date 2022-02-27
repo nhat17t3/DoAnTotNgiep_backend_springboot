@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,10 +15,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import shop.DTO.ResponseObject;
 import shop.entity.Feedback;
+import shop.entity.Order;
+import shop.entity.Product;
 import shop.service.FeedbackService;
 
 @RestController
@@ -26,15 +32,15 @@ public class FeedbackController {
 	@Autowired
 	FeedbackService feedbackService;
 
-	@GetMapping("/feedbacks")
-	public ResponseEntity<ResponseObject> getListFeedback() {
-		List<Feedback> list = feedbackService.findAll();
-//		if (list.isEmpty()) {
-//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//		}
-		ResponseObject resposeObject = new ResponseObject("success", "find all Feedback success", list);
-		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
-	}
+//	@GetMapping("/feedbacks")
+//	public ResponseEntity<ResponseObject> getListFeedback() {
+//		List<Feedback> list = feedbackService.findAll();
+////		if (list.isEmpty()) {
+////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+////		}
+//		ResponseObject resposeObject = new ResponseObject("success", "find all Feedback success", list);
+//		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+//	}
 
 	@GetMapping("/feedbacks/{id}")
 	public ResponseEntity<ResponseObject> getFeedbackById(@PathVariable(value = "id") int id) {
@@ -80,29 +86,37 @@ public class FeedbackController {
 		ResponseObject resposeObject = new ResponseObject("success", "delete Feedback success", "");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
+	
+	@GetMapping("/feedbacks")
+	public ResponseEntity<ResponseObject> getListFeedbackPage(@RequestParam(value = "limit", required = true) int limit,
+			@RequestParam(value = "page", required = true) int page) {
+		Pageable pageable = PageRequest.of(page, limit);
+		List<Feedback> list = feedbackService.findAllPage(pageable);
+//		if (listCate.isEmpty()) {
+//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//		}
+		ResponseObject resposeObject = new ResponseObject("success", "findAll feedback by page", list);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
 //
-//	@GetMapping("/categories/search")
-//	public ResponseEntity<ResponseObject> searchCategoryByNamePage(@RequestParam(value = "q", required = true) String q,
+//	@GetMapping("/feedbacks/brand/{id}")
+//	public ResponseEntity<ResponseObject> getProductsByBrandPage(@PathVariable int id,
 //			@RequestParam(value = "limit", required = false) int limit,
 //			@RequestParam(value = "page", required = false) int page) {
 //		Pageable pageable = PageRequest.of(page, limit);
-//		List<Category> listCate = categoryService.findAllByNameAndPage(q, pageable);
+//		List<Product> list = productService.findAllByBrandId(id, pageable);
 ////		if (listCate.isEmpty()) {
 ////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 ////		}
-//		ResponseObject resposeObject = new ResponseObject("success", "search category by name  ", listCate);
-//		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
-//	}
 //
-//	@GetMapping("/categories")
-//	public ResponseEntity<ResponseObject> getListCategoryPage(@RequestParam(value = "limit", required = true) int limit,
-//			@RequestParam(value = "page", required = true) int page) {
-//		Pageable pageable = PageRequest.of(page, limit);
-//		List<Category> listCate = categoryService.findAllAndPage(pageable);
-////		if (listCate.isEmpty()) {
-////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-////		}
-//		ResponseObject resposeObject = new ResponseObject("success", "find all cate by page", listCate);
+//		for (Product product : list) {
+//			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+//					.path(product.getImage()).toUriString();
+//			product.setImage(fileDownloadUri);
+//		}
+//		ResponseObject resposeObject = new ResponseObject("success", "find all Product by brand Id  ", list);
 //		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 //	}
+	
+	
 }

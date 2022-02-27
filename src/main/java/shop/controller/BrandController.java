@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,13 +37,15 @@ public class BrandController {
 	@Autowired
 	FilesStorageService storageService;
 
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 	@GetMapping("/brands")
 	public ResponseEntity<ResponseObject> getListBrand() {
 		List<Brand> listBrand = brandService.findAll();
-		
+
 		for (Brand brand : listBrand) {
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(brand.getImage())
-					.toUriString();
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(brand.getImage()).toUriString();
 			brand.setImage(fileDownloadUri);
 		}
 		ResponseObject resposeObject = new ResponseObject("success", " findAll brand", listBrand);
@@ -55,29 +58,29 @@ public class BrandController {
 		if (brand == null) {
 			return ResponseEntity.notFound().build();
 		}
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(brand.getImage())
-				.toUriString();
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+				.path(brand.getImage()).toUriString();
 		brand.setImage(fileDownloadUri);
 		ResponseObject resposeObject = new ResponseObject("success", "find brand by id success", brand);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/brands")
 	public ResponseEntity<ResponseObject> createBrand(@RequestParam String name, @RequestParam String slug,
 			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
 
-		String fileName ;
+		String fileName;
 		try {
 			fileName = storageService.save(image);
-			
+
 		} catch (Exception e) {
 			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
-		
-		
+
 		Brand brand = new Brand(name, slug, null, isActive);
 		brand.setImage(fileName);
 		brand.setCreatedAt(LocalDateTime.now());
@@ -86,28 +89,32 @@ public class BrandController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/brands/{id}")
-	public ResponseEntity<ResponseObject> updateBrand(@PathVariable(value = "id") int id, @RequestParam String name, @RequestParam String slug,
-			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
+	public ResponseEntity<ResponseObject> updateBrand(@PathVariable(value = "id") int id, @RequestParam String name,
+			@RequestParam String slug, @RequestParam(required = false) MultipartFile image,
+			@RequestParam boolean isActive) throws IOException {
 		Brand brand = brandService.findById(id);
 		if (brand == null) {
 			return ResponseEntity.notFound().build();
 		}
-		
-		String fileName ;
-		try {
-			fileName = storageService.save(image);
-			
-		} catch (Exception e) {
-			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
-			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+
+		if (image != null) {
+			try {
+				String fileName;
+				fileName = storageService.save(image);
+				brand.setImage(fileName);
+
+			} catch (Exception e) {
+				ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
+				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 
 		brand.setName(name);
 		brand.setSlug(slug);
-		brand.setImage(fileName);
 		brand.setIsActive(isActive);
 		LocalDateTime time = LocalDateTime.now();
 		brand.setUpdatedAt(time);
@@ -117,6 +124,8 @@ public class BrandController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/brands/{id}")
 	public ResponseEntity<ResponseObject> deleteBrand(@PathVariable(value = "id") int id) {
 		Brand cate = brandService.findById(id);

@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,10 +63,14 @@ public class ProductController {
 		if (item == null) {
 			return ResponseEntity.notFound().build();
 		}
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+				.path(item.getImage()).toUriString();
+		item.setImage(fileDownloadUri);
 		ResponseObject resposeObject = new ResponseObject("success", "find Product by id success", item);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+//	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/products")
 	public ResponseEntity<ResponseObject> createProduct(@RequestParam String name, @RequestParam String slug,
 			@RequestParam String code, @RequestParam MultipartFile image, @RequestParam double unitPrice,
@@ -98,7 +103,7 @@ public class ProductController {
 			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+		System.out.println(fileName);
 		item.setImage(fileName);
 		item.setCreatedAt(LocalDateTime.now());
 		item.setBrand(brandService.findById(brandId));
@@ -116,9 +121,10 @@ public class ProductController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/products/{id}")
 	public ResponseEntity<ResponseObject> updateProduct(@PathVariable(value = "id") int id, @RequestParam String name,
-			@RequestParam String slug, @RequestParam String code, @RequestParam MultipartFile image,
+			@RequestParam String slug, @RequestParam String code, @RequestParam(required = false) MultipartFile image,
 			@RequestParam double unitPrice, @RequestParam double promotionPrice, @RequestParam int instock,
 			@RequestParam String shortDesc, @RequestParam String description, @RequestParam String ingredient,
 			@RequestParam String specification, @RequestParam boolean isHot, @RequestParam boolean isNew,
@@ -126,6 +132,19 @@ public class ProductController {
 		Product item = productService.findById(id);
 		if (item == null) {
 			return ResponseEntity.notFound().build();
+		}
+
+		if (image != null) {
+			try {
+				String fileName;
+				fileName = storageService.save(image);
+				item.setImage(fileName);
+				System.out.println(fileName);
+
+			} catch (Exception e) {
+				ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
+				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 
 		item.setName(name);
@@ -143,16 +162,6 @@ public class ProductController {
 		item.setIsActive(isActive);
 		item.setBrand(brandService.findById(brandId));
 		item.setUpdatedAt(LocalDateTime.now());
-		
-		String fileName ;
-		try {
-			fileName = storageService.save(image);
-			
-		} catch (Exception e) {
-			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
-			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		item.setImage(fileName);
 
 		Set<Category> newListCate = new HashSet<Category>();
 		for (Integer cateId : categories) {
@@ -163,10 +172,12 @@ public class ProductController {
 		item.setCategories(newListCate);
 
 		Product updateItem = productService.save(item);
+		System.out.println(updateItem.getImage());
 		ResponseObject resposeObject = new ResponseObject("success", "update Product success", updateItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/products/{id}")
 	public ResponseEntity<ResponseObject> deleteProduct(@PathVariable(value = "id") int id) {
 		Product item = productService.findById(id);
@@ -179,7 +190,8 @@ public class ProductController {
 	}
 
 	@GetMapping("/products/search")
-	public ResponseEntity<ResponseObject> searchProductByNamePage(@RequestParam(value = "key", required = true) String key,
+	public ResponseEntity<ResponseObject> searchProductByNamePage(
+			@RequestParam(value = "key", required = true) String key,
 			@RequestParam(value = "limit", required = false) int limit,
 			@RequestParam(value = "page", required = false) int page) {
 		Pageable pageable = PageRequest.of(page, limit);
@@ -196,7 +208,7 @@ public class ProductController {
 		ResponseObject resposeObject = new ResponseObject("success", "search Product by name  ", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/products/brand/{id}")
 	public ResponseEntity<ResponseObject> getProductsByBrandPage(@PathVariable int id,
 			@RequestParam(value = "limit", required = false) int limit,
@@ -215,7 +227,7 @@ public class ProductController {
 		ResponseObject resposeObject = new ResponseObject("success", "find all Product by brand Id  ", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/products/category/{id}")
 	public ResponseEntity<ResponseObject> getProductsByCategoryPage(@PathVariable int id,
 			@RequestParam(value = "limit", required = false) int limit,
@@ -257,16 +269,30 @@ public class ProductController {
 		}
 		
 
-	
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		
+//		List<Product> kkk = productService.findAll();
+//		long count = 0L;
+//		for (Product product : kkk) {
+//			count ++;
+//		}
+		
+		long count = productService.count();
+		
 		for (Product product : list) {
 			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 					.path(product.getImage()).toUriString();
 			product.setImage(fileDownloadUri);
 		}
+		
+		
 		ResponseObject resposeObject = new ResponseObject("success", "find all Product by page", list);
+		
+		System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuu" + list);
+		resposeObject.setCount(count);
+		System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuu" + list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

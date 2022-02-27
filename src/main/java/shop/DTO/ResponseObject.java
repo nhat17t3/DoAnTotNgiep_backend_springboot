@@ -7,6 +7,9 @@ public class ResponseObject {
 	private String message;
 	
 	private Object dataResponse;
+	
+	private Long count;
+
 
 	public ResponseObject(String status, String message, Object dataResponse) {
 		super();
@@ -15,6 +18,13 @@ public class ResponseObject {
 		this.dataResponse = dataResponse;
 	}
 
+	public Long getCount() {
+		return count;
+	}
+	
+	public void setCount(Long count) {
+		this.count = count;
+	}
 	public String getStatus() {
 		return status;
 	}

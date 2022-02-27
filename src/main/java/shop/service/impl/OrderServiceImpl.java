@@ -68,4 +68,10 @@ public class OrderServiceImpl implements OrderService{
 		return orderRepository.findAllByStatus(status, pageable);
 	}
 
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return orderRepository.count();
+	}
+
 }

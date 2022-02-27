@@ -45,6 +45,7 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public List<Product> findAllPage(Pageable pageable) {
 		// TODO Auto-generated method stub
+		System.out.println("ccccccccccccccccccccccccccccc");
 		return productRepository.findAllPage(pageable);
 	}
 
@@ -82,6 +83,12 @@ public class ProductServiceImpl implements ProductService{
 	public List<Product> findAllByCategorieId(int categoryId, Pageable pageable) {
 		// TODO Auto-generated method stub
 		return productRepository.findAllByCategorieId(categoryId, pageable);
+	}
+
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return productRepository.count();
 	}
 
 

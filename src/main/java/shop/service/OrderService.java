@@ -17,6 +17,8 @@ public interface OrderService {
 	void delete(int id);
 	
 //	bo sung them
+	
+	Long count();
 
 	List<Order> findAllPage(Pageable pageable);
 

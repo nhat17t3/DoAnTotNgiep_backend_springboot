@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +45,19 @@ public class AuthController {
 
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+	
+	@PostMapping("/getInfor")
+	public ResponseEntity<ResponseObject> getInformationUser(@RequestBody LoginRequest token) {
+
+		System.out.println(token);
+		int userID = jwtTokenProvider.getUserIdFromJWT(token.getToken());
+		
+		User user = userService.findById(userID);
+
+		System.out.println(user);
+		ResponseObject resposeObject = new ResponseObject("success", "get information user", user);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
 
 	@PostMapping("/signin")
 	public ResponseEntity<ResponseObject> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -78,6 +92,7 @@ public class AuthController {
 		String password = passwordEncoder.encode(form.getPassword());
 		user.setPassword(password);
 		user.setCreatedAt(LocalDateTime.now());
+		user.setIsActive(true);
 
 		Set<Role> newRoles = new HashSet<Role>();
 		Set<String> roles = form.getRoles();

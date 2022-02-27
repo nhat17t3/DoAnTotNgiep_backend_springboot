@@ -13,6 +13,8 @@ public interface TransporterService {
 	Transporter save(Transporter brand);
 
 	void delete(int id);
+	
+	
 
 
 }

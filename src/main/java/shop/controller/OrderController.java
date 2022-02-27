@@ -152,6 +152,7 @@ public class OrderController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "search Order by name  ", listCate);
+		resposeObject.setCount(orderService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -164,6 +165,7 @@ public class OrderController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll Order by page", listCate);
+		resposeObject.setCount(orderService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 	
@@ -187,6 +189,7 @@ public class OrderController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll Order by Status Order", listCate);
+		resposeObject.setCount(orderService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

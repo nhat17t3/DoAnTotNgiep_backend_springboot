@@ -3,6 +3,8 @@ package shop.DTO;
 public class LoginRequest {
 	private String usernameOrEmail;
 	private String password;
+	
+	private String token;
 
 	public LoginRequest() {
 		super();
@@ -29,5 +31,15 @@ public class LoginRequest {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	
 
 }

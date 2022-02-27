@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,6 +58,7 @@ public class ArticleController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/articles")
 	public ResponseEntity<ResponseObject> createArticle(@RequestBody ArticleRequest form) {
 		Article item = new Article(form.getName(), form.getSlug(), form.getIsHot(), form.getShortDesc(),
@@ -69,6 +71,7 @@ public class ArticleController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/articles/{id}")
 	public ResponseEntity<ResponseObject> updateArticle(@PathVariable(value = "id") int id, @RequestBody ArticleRequest form) {
 		Article item = articleService.findById(id);
@@ -90,6 +93,7 @@ public class ArticleController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/articles/{id}")
 	public ResponseEntity<ResponseObject> deleteArticle(@PathVariable(value = "id") int id) {
 		Article item = articleService.findById(id);
@@ -109,6 +113,7 @@ public class ArticleController {
 		List<Article> list = articleService.findAllByNameAndPage(q, pageable);
 
 		ResponseObject resposeObject = new ResponseObject("success", "search Article by name  ", list);
+		resposeObject.setCount(articleService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -118,6 +123,7 @@ public class ArticleController {
 		Pageable pageable = PageRequest.of(page, limit);
 		List<Article> list = articleService.findAllAndPage(pageable);
 		ResponseObject resposeObject = new ResponseObject("success", "find all Article by page", list);
+		resposeObject.setCount(articleService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

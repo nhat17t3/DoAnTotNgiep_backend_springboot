@@ -49,11 +49,18 @@ public class TransportServiceImpl implements TransportService{
 		return   transportRepository.findAllPage(pageable);
 	}
 
+	@Override
+	public List<Transport> searchByCode(String key, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return transportRepository.searchByCode(key, pageable);
+	}
+
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return transportRepository.count();
+	}
+
 	
-//	@Override
-//	public List<Category> findAllByNameAndPage(String name, Pageable pageable) {
-//		// TODO Auto-generated method stub
-//		return   categoryRepository.findAllByNameAndPage(name, pageable);
-//	}
 
 }

@@ -1,7 +1,6 @@
 package shop.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 
@@ -18,10 +17,14 @@ public interface UserService {
 	void delete(int id);
 	
 //	bo sung them
+	
+	Long count();
 
 	List<User> findAllAndPage(Pageable pageable);
 
-	List<User> findAllByNameAndPage(String name, Pageable pageable);
+//	List<User> findAllByNameAndPage(String name, Pageable pageable);
+	
+	List<User> searchByNameOrEmail(String key, Pageable pageable);
 
 
 	User findByUsername( String username);

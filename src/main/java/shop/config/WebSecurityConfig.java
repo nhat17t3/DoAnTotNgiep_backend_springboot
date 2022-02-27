@@ -3,6 +3,7 @@ package shop.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -86,16 +87,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.accessDeniedHandler(customAccessDeniedHandler()).and();
 
 		// Set permissions on endpoints
-		http.authorizeRequests()
-				// Our public endpoints
-				.antMatchers("/api/**").permitAll();
-//            .antMatchers(HttpMethod.GET, "/api/author/**").permitAll()
-//            .antMatchers(HttpMethod.POST, "/api/author/search").permitAll()
-//            .antMatchers(HttpMethod.GET, "/api/book/**").permitAll()
-//            .antMatchers(HttpMethod.POST, "/api/book/search").permitAll()
-		// Our private endpoints
+//		http.authorizeRequests()
+// Our public endpoints
+//				.antMatchers("/api/**").permitAll(); 
+//Our private endpoints
 //            .anyRequest().authenticated();   
 
+		http.authorizeHttpRequests()
+		.antMatchers(HttpMethod.GET, "/api/**").permitAll();
+//		.anyRequest().authenticated(); 
+		
+		
 		// Add JWT token filter
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +59,7 @@ public class TransportController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/transports")
 	public ResponseEntity<ResponseObject> createTransport(@RequestBody TransportRequest form) {
 
@@ -77,6 +79,7 @@ public class TransportController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/transports/{id}")
 	public ResponseEntity<ResponseObject> updateTransport(@PathVariable(value = "id") int id,
 			@RequestBody TransportRequest form) {
@@ -94,6 +97,7 @@ public class TransportController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/transports/{id}")
 	public ResponseEntity<ResponseObject> deleteOrder(@PathVariable(value = "id") int id) {
 		Transport item = transportService.findById(id);
@@ -105,19 +109,20 @@ public class TransportController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
-////
-//	@GetMapping("/transports/search")
-//	public ResponseEntity<ResponseObject> searchOrderByNamePage(@RequestParam(value = "q", required = true) String q,
-//			@RequestParam(value = "limit", required = false) int limit,
-//			@RequestParam(value = "page", required = false) int page) {
-//		Pageable pageable = PageRequest.of(page, limit);
-//		List<Transport> listCate = transportService.findAllByNameAndPage(q, pageable);
-////		if (listCate.isEmpty()) {
-////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-////		}
-//		ResponseObject resposeObject = new ResponseObject("success", "search Transport by name  ", listCate);
-//		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
-//	}
+//
+	@GetMapping("/transports/search")
+	public ResponseEntity<ResponseObject> searchOrderByNamePage(@RequestParam(value = "key", required = true) String key,
+			@RequestParam(value = "limit", required = false) int limit,
+			@RequestParam(value = "page", required = false) int page) {
+		Pageable pageable = PageRequest.of(page, limit);
+		List<Transport> listCate = transportService.searchByCode(key, pageable);
+//		if (listCate.isEmpty()) {
+//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//		}
+		ResponseObject resposeObject = new ResponseObject("success", "search Transport by name  ", listCate);
+		resposeObject.setCount(transportService.count());
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
 
 	@GetMapping("/transports")
 	public ResponseEntity<ResponseObject> getListOrderPage(@RequestParam(value = "limit", required = true) int limit,
@@ -128,6 +133,7 @@ public class TransportController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll Transport by page CREATEDAT DESC", listCate);
+		resposeObject.setCount(transportService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

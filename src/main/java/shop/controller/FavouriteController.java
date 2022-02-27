@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import shop.DTO.FavouriteRequest;
 import shop.DTO.ResponseObject;
 import shop.entity.Favourite;
+import shop.entity.Product;
 import shop.entity.UserProductKey;
 import shop.service.FavouriteService;
 import shop.service.ProductService;
@@ -41,6 +43,12 @@ public class FavouriteController {
 //		if (list.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		for (Favourite a : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(a.getProduct().getImage()).toUriString();
+			a.getProduct().setImage(fileDownloadUri);
+		}
+		System.out.println("aaaaaaaaaaaaaaaaaaaa" +list );
 		ResponseObject resposeObject = new ResponseObject("success", "find all Favourite success", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -125,6 +133,12 @@ public class FavouriteController {
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		
+		for (Favourite a : listCate) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(a.getProduct().getImage()).toUriString();
+			a.getProduct().setImage(fileDownloadUri);
+		}
 		ResponseObject resposeObject = new ResponseObject("success", "find all favourite by userID", listCate);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}

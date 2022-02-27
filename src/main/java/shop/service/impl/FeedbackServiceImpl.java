@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import shop.entity.Feedback;
@@ -39,6 +40,18 @@ public class FeedbackServiceImpl implements FeedbackService{
 	public void delete(int id) {
 		feedbackRepository.deleteById(id);
 		
+	}
+
+	@Override
+	public List<Feedback> findAllPage(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return feedbackRepository.findAllPage(pageable);
+	}
+
+	@Override
+	public List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return feedbackRepository.findAllByIsRead(isRead, pageable);
 	}
 
 

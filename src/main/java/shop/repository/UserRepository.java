@@ -17,8 +17,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findAllAndPage(Pageable pageable);
 
 //	search by name /sort by id/ paging
-	@Query("SELECT e FROM User e WHERE e.email LIKE  %:name% OR e.phone LIKE %:name% ORDER BY e.id ")
-	List<User> findAllByNameAndPage(@Param("name") String name, Pageable pageable);
+	@Query("SELECT e FROM User e WHERE e.email LIKE  %:key% OR e.phone LIKE %:key% ORDER BY e.id ")
+	List<User> searchByNameOrEmail(@Param("key") String key, Pageable pageable);
 	
 	Optional<User> findByUsername( String username);
 

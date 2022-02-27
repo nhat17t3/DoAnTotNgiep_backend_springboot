@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -82,6 +83,7 @@ public class UserController {
 		String password = passwordEncoder.encode(form.getPassword());
 		user.setPassword(password);
 		user.setCreatedAt(LocalDateTime.now());
+		user.setIsActive(true);
 
 		Set<Role> newRoles = new HashSet<Role>();
 		Set<String> roles = form.getRoles();
@@ -132,6 +134,7 @@ public class UserController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/users/{id}")
 	public ResponseEntity<ResponseObject> deleteUser(@PathVariable(value = "id") int id) {
 		User item = userService.findById(id);
@@ -145,15 +148,16 @@ public class UserController {
 
 //
 	@GetMapping("/users/search")
-	public ResponseEntity<ResponseObject> searchUserByNamePage(@RequestParam(value = "q", required = true) String q,
+	public ResponseEntity<ResponseObject> searchUserByNamePage(@RequestParam(value = "key", required = true) String key,
 			@RequestParam(value = "limit", required = false) int limit,
 			@RequestParam(value = "page", required = false) int page) {
 		Pageable pageable = PageRequest.of(page, limit);
-		List<User> listCate = userService.findAllByNameAndPage(q, pageable);
+		List<User> listCate = userService.searchByNameOrEmail(key, pageable);
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
-		ResponseObject resposeObject = new ResponseObject("success", "search User by name  ", listCate);
+		ResponseObject resposeObject = new ResponseObject("success", "search User by name or email  ", listCate);
+		resposeObject.setCount(userService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
@@ -166,6 +170,7 @@ public class UserController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll User by page", listCate);
+		resposeObject.setCount(userService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

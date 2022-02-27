@@ -17,9 +17,12 @@ public interface TransportService {
 	void delete(int id);
 
 //	bo sung them
+	
+	Long count();
 
 	List<Transport> findAllPage(Pageable pageable);
+	
+	List<Transport> searchByCode(String key, Pageable pageable);
 
-//	List<Category> findAllByNameAndPage(String name, Pageable pageable);
 
 }

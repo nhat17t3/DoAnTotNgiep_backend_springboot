@@ -50,11 +50,6 @@ public class UserServiceImpl implements UserService{
 	}
 
 	
-	@Override
-	public List<User> findAllByNameAndPage(String name, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return   userRepository.findAllByNameAndPage(name, pageable);
-	}
 
 	@Override
 	public User findByUsername(String username) {
@@ -85,5 +80,18 @@ public class UserServiceImpl implements UserService{
 		// TODO Auto-generated method stub
 		return userRepository.findByUsernameOrEmail(username, email).orElse(null);
 	}
+
+	@Override
+	public List<User> searchByNameOrEmail(String key, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return userRepository.searchByNameOrEmail(key, pageable);
+	}
+
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return userRepository.count();
+	}
+
 
 }

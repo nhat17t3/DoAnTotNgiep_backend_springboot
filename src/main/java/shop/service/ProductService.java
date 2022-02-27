@@ -17,6 +17,8 @@ public interface ProductService {
 	void delete(int id);
 	
 //	bo sung them
+	
+	Long count();
 
 //	find all + phan trang
 	List<Product> findAllPage(Pageable pageable);

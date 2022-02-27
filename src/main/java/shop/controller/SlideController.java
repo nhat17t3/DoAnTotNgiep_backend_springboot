@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,8 @@ public class SlideController {
 	public ResponseEntity<ResponseObject> getListSlide() {
 		List<Slide> list = slideService.findAll();
 		for (Slide slide : list) {
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(slide.getImage())
-					.toUriString();
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(slide.getImage()).toUriString();
 			slide.setImage(fileDownloadUri);
 		}
 		ResponseObject resposeObject = new ResponseObject("success", " findAll slide", list);
@@ -55,28 +56,29 @@ public class SlideController {
 		if (slide == null) {
 			return ResponseEntity.notFound().build();
 		}
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(slide.getImage())
-				.toUriString();
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+				.path(slide.getImage()).toUriString();
 		slide.setImage(fileDownloadUri);
 		ResponseObject resposeObject = new ResponseObject("success", "find slide by id success", slide);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/slides")
-	public ResponseEntity<ResponseObject> createSlide(@RequestParam String name, 
-			@RequestParam MultipartFile image,@RequestParam int sort,@RequestParam String link, @RequestParam boolean isActive) throws IOException {
+	public ResponseEntity<ResponseObject> createSlide(@RequestParam String name, @RequestParam MultipartFile image,
+			@RequestParam int sort, @RequestParam String link, @RequestParam boolean isActive) throws IOException {
 
-		String fileName ;
+		String fileName;
 		try {
 			fileName = storageService.save(image);
-			
+
 		} catch (Exception e) {
 			ResponseObject resposeObject = new ResponseObject("error", "error create slide", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
-		
+
 		Slide slide = new Slide();
 
 		slide.setName(name);
@@ -85,33 +87,39 @@ public class SlideController {
 		slide.setLink(link);
 		slide.setIsActive(isActive);
 		slide.setCreatedAt(LocalDateTime.now());
-		
+
 		Slide newSlide = slideService.save(slide);
 		ResponseObject resposeObject = new ResponseObject("success", "create slide success", newSlide);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/slides/{id}")
-	public ResponseEntity<ResponseObject> updateSlide(@PathVariable(value = "id") int id, @RequestParam String name, 
-			@RequestParam MultipartFile image,@RequestParam int sort,@RequestParam String link, @RequestParam boolean isActive) throws IOException {
+	public ResponseEntity<ResponseObject> updateSlide(@PathVariable(value = "id") int id, @RequestParam String name,
+			@RequestParam(required = false) MultipartFile image, @RequestParam int sort, @RequestParam String link,
+			@RequestParam boolean isActive) throws IOException {
 		Slide slide = slideService.findById(id);
 		if (slide == null) {
 			return ResponseEntity.notFound().build();
 		}
-		
-		String fileName ;
-		try {
-			fileName = storageService.save(image);
-			
-		} catch (Exception e) {
-			ResponseObject resposeObject = new ResponseObject("error", "error create slide", e.getMessage());
-			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+
+		if (image != null) {
+
+			try {
+				String fileName;
+				fileName = storageService.save(image);
+				slide.setImage(fileName);
+
+			} catch (Exception e) {
+				ResponseObject resposeObject = new ResponseObject("error", "error create slide", e.getMessage());
+				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
+
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 
 		slide.setName(name);
-		slide.setImage(fileName);
 		slide.setSort(sort);
 		slide.setLink(link);
 		slide.setIsActive(isActive);
@@ -123,6 +131,7 @@ public class SlideController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/slides/{id}")
 	public ResponseEntity<ResponseObject> deleteSlide(@PathVariable(value = "id") int id) {
 		Slide slide = slideService.findById(id);
@@ -130,7 +139,7 @@ public class SlideController {
 			return ResponseEntity.notFound().build();
 		}
 		slideService.delete(id);
-		ResponseObject resposeObject = new ResponseObject("success", "delete slide success","");
+		ResponseObject resposeObject = new ResponseObject("success", "delete slide success", "");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 

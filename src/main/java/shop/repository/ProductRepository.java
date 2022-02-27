@@ -31,4 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
 	@Query("  SELECT m FROM Product m JOIN m.categories mg WHERE mg.id = :categoryId  ")
 	List<Product> findAllByCategorieId(int categoryId, Pageable pageable);
+	
+	@Query(value = "SELECT count(*) FROM product", nativeQuery=true)
+	long count();
 }

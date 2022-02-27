@@ -22,6 +22,7 @@ import shop.DTO.RatingRequest;
 import shop.DTO.ResponseObject;
 import shop.entity.Rating;
 import shop.entity.UserProductKey;
+import shop.entity.Voucher;
 import shop.service.ProductService;
 import shop.service.RatingService;
 import shop.service.UserService;
@@ -49,7 +50,7 @@ public class RatingController {
 //		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 //	}
 
-	@GetMapping("/ratings")
+	@GetMapping("/ratings/id")
 	public ResponseEntity<ResponseObject> getRatingById(@RequestParam int userId, @RequestParam int productId) {
 		UserProductKey key = new UserProductKey(userId, productId);
 
@@ -104,19 +105,17 @@ public class RatingController {
 		ResponseObject resposeObject = new ResponseObject("success", "delete Rating success", "");
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
-//
-//	@GetMapping("/ratings/search")
-//	public ResponseEntity<ResponseObject> searchCategoryByNamePage(@RequestParam(value = "q", required = true) String q,
-//			@RequestParam(value = "limit", required = false) int limit,
-//			@RequestParam(value = "page", required = false) int page) {
-//		Pageable pageable = PageRequest.of(page, limit);
-//		List<Category> listCate = categoryService.findAllByNameAndPage(q, pageable);
-////		if (listCate.isEmpty()) {
-////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-////		}
-//		ResponseObject resposeObject = new ResponseObject("success", "search category by name  ", listCate);
-//		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
-//	}
+	@GetMapping("/ratings")
+	public ResponseEntity<ResponseObject> getListRatingPage(@RequestParam(value = "limit", required = true) int limit,
+			@RequestParam(value = "page", required = true) int page) {
+		Pageable pageable = PageRequest.of(page, limit);
+		List<Rating> list = ratingService.findAllPage(pageable);
+//		if (listCate.isEmpty()) {
+//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//		}
+		ResponseObject resposeObject = new ResponseObject("success", "findAll Rating by page", list);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
 //
 	@GetMapping("/ratings/product/{id}")
 	public ResponseEntity<ResponseObject> getListRatingByProductId(@RequestParam(value = "limit", required = false) int limit,

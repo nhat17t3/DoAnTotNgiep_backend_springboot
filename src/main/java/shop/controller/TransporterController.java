@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class TransporterController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/transporters")
 	public ResponseEntity<ResponseObject> createTransporter(@RequestBody Transporter form) {
 		Transporter item = new Transporter(form.getName(), form.getLink(), form.getIsActive(), LocalDateTime.now());
@@ -54,6 +56,7 @@ public class TransporterController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/transporters/{id}")
 	public ResponseEntity<ResponseObject> updateTransporter(@PathVariable(value = "id") int id,
 			@RequestBody Transporter form) {
@@ -72,6 +75,7 @@ public class TransporterController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/transporters/{id}")
 	public ResponseEntity<ResponseObject> deleteTransporter(@PathVariable(value = "id") int id) {
 		Transporter item = transporterService.findById(id);

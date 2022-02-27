@@ -17,6 +17,8 @@ public interface ArticleService {
 	void delete(int id);
 	
 //	bo sung them
+	
+	Long count();
 
 	List<Article> findAllAndPage(Pageable pageable);
 

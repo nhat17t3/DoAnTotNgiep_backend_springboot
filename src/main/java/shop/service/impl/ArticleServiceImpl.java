@@ -56,4 +56,10 @@ public class ArticleServiceImpl implements ArticleService{
 		return   articleRepository.findAllByNameAndPage(name, pageable);
 	}
 
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return articleRepository.count();
+	}
+
 }

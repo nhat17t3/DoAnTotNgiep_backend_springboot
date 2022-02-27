@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +47,7 @@ public class PaymentController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/payments")
 	public ResponseEntity<ResponseObject> createPayment(@RequestBody Payment form) {
 		Payment item = new Payment(form.getName(), form.getDescription(), form.getIsActive(), LocalDateTime.now());
@@ -54,6 +56,7 @@ public class PaymentController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/payments/{id}")
 	public ResponseEntity<ResponseObject> updatePayment(@PathVariable(value = "id") int id,
 			@RequestBody Payment form) {
@@ -72,6 +75,7 @@ public class PaymentController {
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/payments/{id}")
 	public ResponseEntity<ResponseObject> deletePayment(@PathVariable(value = "id") int id) {
 		Payment item = paymentService.findById(id);
