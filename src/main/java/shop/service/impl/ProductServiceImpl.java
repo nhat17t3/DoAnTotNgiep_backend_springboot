@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService{
 	@Override
 	public List<Product> findAllByCategorieId(int categoryId, Pageable pageable) {
 		// TODO Auto-generated method stub
-		return productRepository.findAllByCategorieId(categoryId, pageable);
+		return productRepository.findAllByCategoryId(categoryId, pageable);
 	}
 
 	@Override

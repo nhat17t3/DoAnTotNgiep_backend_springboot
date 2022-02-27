@@ -67,7 +67,7 @@ public class BrandController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/brands")
-	public ResponseEntity<ResponseObject> createBrand(@RequestParam String name, @RequestParam String slug,
+	public ResponseEntity<ResponseObject> createBrand(@RequestParam String name,
 			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
 
 		String fileName;
@@ -81,7 +81,7 @@ public class BrandController {
 //		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(fileName)
 //				.toUriString();
 
-		Brand brand = new Brand(name, slug, null, isActive);
+		Brand brand = new Brand(name, null, isActive);
 		brand.setImage(fileName);
 		brand.setCreatedAt(LocalDateTime.now());
 		Brand newBrand = brandService.save(brand);
@@ -92,7 +92,7 @@ public class BrandController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/brands/{id}")
 	public ResponseEntity<ResponseObject> updateBrand(@PathVariable(value = "id") int id, @RequestParam String name,
-			@RequestParam String slug, @RequestParam(required = false) MultipartFile image,
+			 @RequestParam(required = false) MultipartFile image,
 			@RequestParam boolean isActive) throws IOException {
 		Brand brand = brandService.findById(id);
 		if (brand == null) {
@@ -114,7 +114,7 @@ public class BrandController {
 //				.toUriString();
 
 		brand.setName(name);
-		brand.setSlug(slug);
+//		brand.setSlug(slug);
 		brand.setIsActive(isActive);
 		LocalDateTime time = LocalDateTime.now();
 		brand.setUpdatedAt(time);

@@ -46,21 +46,31 @@ public class Order {
 
 	@Column
 	private String note;
+	
+	@Column(name = "status")
+	private Integer status;
 
 	@Column(name = "confirm_at")
 	private LocalDateTime confirmAt;
 
-	@Column(name = "status")
-	private Integer status;
 
-	@Column(name = "pay_at")
-	private LocalDateTime payAt;
+//	@Column(name = "pay_at")
+//	private LocalDateTime payAt;
+	
+	@Column(name = "payment_type")
+	private String paymentType;
+	
+	@Column(name = "payment_status")
+	private Boolean paymentStatus;
 
 	@Column(name = "cancle_at")
 	private LocalDateTime cancleAt;
 
 	@Column(name = "cancle_reason")
 	private String cancleReason;
+	
+	@Column(name = "done_at")
+	private LocalDateTime doneAt;
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
@@ -70,25 +80,25 @@ public class Order {
 
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "voucher_id", nullable = true)
-	private Voucher voucher;
+//	@JsonIgnore
+//	@ManyToOne
+//	@JoinColumn(name = "voucher_id")
+//	private Voucher voucher;
 
 	
-	@JsonIgnore
-	@ManyToOne
-	@JoinColumn(name = "payment_id", nullable = false)
-	private Payment payment;
+//	@JsonIgnore
+//	@ManyToOne
+//	@JoinColumn(name = "payment_id", nullable = false)
+//	private Payment payment;
 
 	
-	@JsonIgnore
-	@OneToOne(mappedBy = "order")
-	private Transport transport;
+//	@JsonIgnore
+//	@OneToOne(mappedBy = "order")
+//	private Transport transport;
 
 	
 //	@JsonIgnore
@@ -186,13 +196,13 @@ public class Order {
 
 	
 
-	public LocalDateTime getPayAt() {
-		return payAt;
-	}
-
-	public void setPayAt(LocalDateTime payAt) {
-		this.payAt = payAt;
-	}
+//	public LocalDateTime getPayAt() {
+//		return payAt;
+//	}
+//
+//	public void setPayAt(LocalDateTime payAt) {
+//		this.payAt = payAt;
+//	}
 
 	public LocalDateTime getCancleAt() {
 		return cancleAt;
@@ -234,29 +244,29 @@ public class Order {
 		this.user = user;
 	}
 
-	public Voucher getVoucher() {
-		return voucher;
-	}
-
-	public void setVoucher(Voucher voucher) {
-		this.voucher = voucher;
-	}
-
-	public Payment getPayment() {
-		return payment;
-	}
-
-	public void setPayment(Payment payment) {
-		this.payment = payment;
-	}
-
-	public Transport getTransport() {
-		return transport;
-	}
-
-	public void setTransport(Transport transport) {
-		this.transport = transport;
-	}
+//	public Voucher getVoucher() {
+//		return voucher;
+//	}
+//
+//	public void setVoucher(Voucher voucher) {
+//		this.voucher = voucher;
+//	}
+//
+//	public Payment getPayment() {
+//		return payment;
+//	}
+//
+//	public void setPayment(Payment payment) {
+//		this.payment = payment;
+//	}
+//
+//	public Transport getTransport() {
+//		return transport;
+//	}
+//
+//	public void setTransport(Transport transport) {
+//		this.transport = transport;
+//	}
 
 	public Set<OrderDetail> getOrderDetails() {
 		return orderDetails;
@@ -274,6 +284,31 @@ public class Order {
 		this.status = status;
 	}
 
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public Boolean getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(Boolean paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public LocalDateTime getDoneAt() {
+		return doneAt;
+	}
+
+	public void setDoneAt(LocalDateTime doneAt) {
+		this.doneAt = doneAt;
+	}
+
+	
 	// getter and setter
 
 }

@@ -24,8 +24,8 @@ public class Brand {
 	@Column
 	private String name;
 
-	@Column
-	private String slug;
+//	@Column
+//	private String slug;
 
 	@Column(name = "image")
 	private String image;
@@ -50,10 +50,10 @@ public class Brand {
 		super();
 	}
 
-	public Brand(String name, String slug, String image, boolean isActive) {
+	public Brand(String name, String image, boolean isActive) {
 		super();
 		this.name = name;
-		this.slug = slug;
+//		this.slug = slug;
 		this.image = image;
 		this.isActive = isActive;
 	}
@@ -75,13 +75,13 @@ public class Brand {
 		this.name = name;
 	}
 
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
+//	public String getSlug() {
+//		return slug;
+//	}
+//
+//	public void setSlug(String slug) {
+//		this.slug = slug;
+//	}
 
 
 

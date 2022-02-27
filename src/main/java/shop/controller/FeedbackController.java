@@ -55,7 +55,7 @@ public class FeedbackController {
 	@PostMapping("/feedbacks")
 	public ResponseEntity<ResponseObject> createFeedback(@RequestBody Feedback form) {
 		Feedback item = new Feedback(form.getTitle(), form.getContent(), form.getName(), form.getEmail(),
-				form.getPhone(), false, LocalDateTime.now());
+				form.getPhone(), LocalDateTime.now());
 		Feedback newItem = feedbackService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "create Feedback success", newItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
@@ -69,7 +69,7 @@ public class FeedbackController {
 			return ResponseEntity.notFound().build();
 		}
 
-		item.setIsRead(form.getIsRead());
+//		item.setIsRead(form.getIsRead());
 
 		Feedback updateItem = feedbackService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "update Feedback success", updateItem);

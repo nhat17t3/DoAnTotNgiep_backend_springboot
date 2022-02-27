@@ -50,7 +50,7 @@ public class CategoryArticleController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/cate_articles")
 	public ResponseEntity<ResponseObject> createCategoryArticle(@RequestBody CategoryArticle form) {
-		CategoryArticle item = new CategoryArticle(form.getName(), form.getSlug(), form.getIsActive(), LocalDateTime.now());
+		CategoryArticle item = new CategoryArticle(form.getName(), form.getIsActive(), LocalDateTime.now());
 		CategoryArticle newItem = categoryArticleService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "create CategoryArticle success", newItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
@@ -66,7 +66,7 @@ public class CategoryArticleController {
 		}
 
 		item.setName(form.getName());
-		item.setSlug(form.getSlug());
+//		item.setSlug(form.getSlug());
 		item.setIsActive(form.getIsActive());
 		item.setUpdatedAt(LocalDateTime.now());
 

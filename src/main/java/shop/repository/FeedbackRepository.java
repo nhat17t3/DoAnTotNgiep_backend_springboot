@@ -13,5 +13,5 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Integer> {
 	@Query("SELECT e FROM Feedback e ")
 	List<Feedback> findAllPage(Pageable pageable);
 	
-	List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable);
+//	List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable);
 }

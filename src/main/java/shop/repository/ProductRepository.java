@@ -28,9 +28,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	List<Product> searchByNameOrCode(@Param("key") String key, Pageable pageable);
 
 	List<Product> findAllByBrandId(int brandId, Pageable pageable);
+	
+	List<Product> findAllByCategoryId(int categoryId, Pageable pageable);
 
-	@Query("  SELECT m FROM Product m JOIN m.categories mg WHERE mg.id = :categoryId  ")
-	List<Product> findAllByCategorieId(int categoryId, Pageable pageable);
+//	@Query("  SELECT m FROM Product m JOIN m.categories mg WHERE mg.id = :categoryId  ")
+//	List<Product> findAllByCategorieId(int categoryId, Pageable pageable);
 	
 	@Query(value = "SELECT count(*) FROM product", nativeQuery=true)
 	long count();

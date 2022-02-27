@@ -30,14 +30,17 @@ public class Product {
 	@Column
 	private String name;
 
-	@Column
-	private String slug;
+//	@Column
+//	private String slug;
 
 	@Column
 	private String code;
 
 	@Column
 	private String image;
+	
+	@Column(name = "more_image")
+	private String moreImage;
 
 	@Column(name = "unit_price")
 	private double unitPrice;
@@ -80,12 +83,15 @@ public class Product {
 	@ManyToOne
 	@JoinColumn(name = "brand_id")
 	private Brand brand;
-
+	
 	
 //	@JsonIgnore
-	@ManyToMany
-	@JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-	private Set<Category> categories;
+//	@ManyToMany
+//	@JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+//	private Set<Category> categories;
+	@ManyToOne
+	@JoinColumn(name = "category_id")
+	private Category category;
 
 	
 	@JsonIgnore
@@ -105,12 +111,12 @@ public class Product {
 		super();
 	}
 
-	public Product(String name, String slug, String code, double unitPrice, double promotionPrice, int instock,
+	public Product(String name, String code, double unitPrice, double promotionPrice, int instock,
 			String shortDesc, String description, String ingredient, String specification, Boolean isHot, Boolean isNew,
 			Boolean isActive) {
 		super();
 		this.name = name;
-		this.slug = slug;
+//		this.slug = slug;
 		this.code = code;
 		this.unitPrice = unitPrice;
 		this.promotionPrice = promotionPrice;
@@ -142,13 +148,13 @@ public class Product {
 		this.name = name;
 	}
 
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
+//	public String getSlug() {
+//		return slug;
+//	}
+//
+//	public void setSlug(String slug) {
+//		this.slug = slug;
+//	}
 
 	public String getCode() {
 		return code;
@@ -278,13 +284,13 @@ public class Product {
 		this.brand = brand;
 	}
 
-	public Set<Category> getCategories() {
-		return categories;
-	}
-
-	public void setCategories(Set<Category> categories) {
-		this.categories = categories;
-	}
+//	public Set<Category> getCategories() {
+//		return categories;
+//	}
+//
+//	public void setCategories(Set<Category> categories) {
+//		this.categories = categories;
+//	}
 
 	public Set<OrderDetail> getOrderDetails() {
 		return orderDetails;
@@ -309,5 +315,23 @@ public class Product {
 	public void setRatings(Set<Rating> ratings) {
 		this.ratings = ratings;
 	}
+
+	public String getMoreImage() {
+		return moreImage;
+	}
+
+	public void setMoreImage(String moreImage) {
+		this.moreImage = moreImage;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+	
+	
 
 }

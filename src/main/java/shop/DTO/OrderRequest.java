@@ -6,9 +6,13 @@ public class OrderRequest {
 
 	private int userId;
 
-	private int voucherId;
+//	private int voucherId;
 
-	private int paymentId;
+//	private int paymentId;
+	
+	private String paymentType;
+	
+	private boolean paymentStatus;
 
 	private String nameReceiver;
 
@@ -31,6 +35,9 @@ public class OrderRequest {
 	private Boolean isCancle;
 	
 	private String cancleReason;
+	
+	private Boolean isDone;
+
 
 	private Set<OrderDetailRequest> orderDetailRequests;
 
@@ -110,21 +117,21 @@ public class OrderRequest {
 		this.userId = userId;
 	}
 
-	public int getVoucherId() {
-		return voucherId;
-	}
-
-	public void setVoucherId(int voucherId) {
-		this.voucherId = voucherId;
-	}
-
-	public int getPaymentId() {
-		return paymentId;
-	}
-
-	public void setPaymentId(int paymentId) {
-		this.paymentId = paymentId;
-	}
+//	public int getVoucherId() {
+//		return voucherId;
+//	}
+//
+//	public void setVoucherId(int voucherId) {
+//		this.voucherId = voucherId;
+//	}
+//
+//	public int getPaymentId() {
+//		return paymentId;
+//	}
+//
+//	public void setPaymentId(int paymentId) {
+//		this.paymentId = paymentId;
+//	}
 
 	public Boolean getIsConfirm() {
 		return isConfirm;
@@ -149,5 +156,39 @@ public class OrderRequest {
 	public void setIsCancle(Boolean isCancle) {
 		this.isCancle = isCancle;
 	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
+	}
+
+	public boolean isPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(boolean paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public String getCancleReason() {
+		return cancleReason;
+	}
+
+	public void setCancleReason(String cancleReason) {
+		this.cancleReason = cancleReason;
+	}
+
+	public Boolean getIsDone() {
+		return isDone;
+	}
+
+	public void setIsDone(Boolean isDone) {
+		this.isDone = isDone;
+	}
+	
+	
 
 }

@@ -2,6 +2,7 @@ package shop.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,17 +73,17 @@ public class ProductController {
 
 //	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/products")
-	public ResponseEntity<ResponseObject> createProduct(@RequestParam String name, @RequestParam String slug,
-			@RequestParam String code, @RequestParam MultipartFile image, @RequestParam double unitPrice,
+	public ResponseEntity<ResponseObject> createProduct(@RequestParam String name,
+			@RequestParam String code, @RequestParam MultipartFile image,@RequestParam MultipartFile[] moreImage, @RequestParam double unitPrice,
 			@RequestParam double promotionPrice, @RequestParam int instock, @RequestParam String shortDesc,
 			@RequestParam String description, @RequestParam String ingredient, @RequestParam String specification,
 			@RequestParam boolean isHot, @RequestParam boolean isNew, @RequestParam boolean isActive,
-			@RequestParam int brandId, @RequestParam Set<Integer> categories) {
+			@RequestParam int brandId, @RequestParam int categoryId) {
 
 		Product item = new Product();
 
 		item.setName(name);
-		item.setSlug(slug);
+//		item.setSlug(slug);
 		item.setCode(code);
 		item.setUnitPrice(unitPrice);
 		item.setPromotionPrice(promotionPrice);
@@ -95,26 +96,44 @@ public class ProductController {
 		item.setIsNew(isNew);
 		item.setIsActive(isActive);
 
-		String fileName ;
 		try {
+			String fileName ;
 			fileName = storageService.save(image);
+			item.setImage(fileName);
 			
 		} catch (Exception e) {
 			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		System.out.println(fileName);
-		item.setImage(fileName);
+		
+		try {
+			List<String> fileNames = new ArrayList<>();
+		      Arrays.asList(moreImage).stream().forEach(file -> {
+		       String fileK = storageService.save(file);
+		        fileNames.add(fileK);
+		        fileNames.add(",");
+		      });
+		     String ooo = "";
+		      for (int i = 0; i < fileNames.size() -1; i++) {
+		    	  ooo = ooo.concat(fileNames.get(i));
+			}
+		      item.setMoreImage(ooo);
+			
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		
 		item.setCreatedAt(LocalDateTime.now());
 		item.setBrand(brandService.findById(brandId));
-//		
-		Set<Category> newListCate = new HashSet<Category>();
-		for (Integer cateId : categories) {
-			Category cate = categotyService.findById(cateId);
-			newListCate.add(cate);
-		}
-
-		item.setCategories(newListCate);
+		item.setCategory(categotyService.findById(categoryId));
+//		Set<Category> newListCate = new HashSet<Category>();
+//		for (Integer cateId : categories) {
+//			Category cate = categotyService.findById(cateId);
+//			newListCate.add(cate);
+//		}
+//		item.setCategories(newListCate);
 
 		Product newItem = productService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "create Product success", newItem);
@@ -124,11 +143,12 @@ public class ProductController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/products/{id}")
 	public ResponseEntity<ResponseObject> updateProduct(@PathVariable(value = "id") int id, @RequestParam String name,
-			@RequestParam String slug, @RequestParam String code, @RequestParam(required = false) MultipartFile image,
+			 @RequestParam String code, @RequestParam(required = false) MultipartFile image,
+			@RequestParam (required = false) MultipartFile[] moreImage,
 			@RequestParam double unitPrice, @RequestParam double promotionPrice, @RequestParam int instock,
 			@RequestParam String shortDesc, @RequestParam String description, @RequestParam String ingredient,
 			@RequestParam String specification, @RequestParam boolean isHot, @RequestParam boolean isNew,
-			@RequestParam boolean isActive, @RequestParam int brandId, @RequestParam Set<Integer> categories) {
+			@RequestParam boolean isActive, @RequestParam int brandId, @RequestParam int categoryId) {
 		Product item = productService.findById(id);
 		if (item == null) {
 			return ResponseEntity.notFound().build();
@@ -139,8 +159,26 @@ public class ProductController {
 				String fileName;
 				fileName = storageService.save(image);
 				item.setImage(fileName);
-				System.out.println(fileName);
 
+			} catch (Exception e) {
+				ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
+				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		if (moreImage != null) {
+			try {
+				List<String> fileNames = new ArrayList<>();
+			      Arrays.asList(moreImage).stream().forEach(file -> {
+			       String fileK = storageService.save(file);
+			        fileNames.add(fileK);
+			        fileNames.add(",");
+			      });
+			     String ooo = "";
+			      for (int i = 0; i < fileNames.size() -1; i++) {
+			    	  ooo = ooo.concat(fileNames.get(i));
+				}
+			      item.setMoreImage(ooo);
+				
 			} catch (Exception e) {
 				ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -148,7 +186,7 @@ public class ProductController {
 		}
 
 		item.setName(name);
-		item.setSlug(slug);
+//		item.setSlug(slug);
 		item.setCode(code);
 		item.setUnitPrice(unitPrice);
 		item.setPromotionPrice(promotionPrice);
@@ -161,15 +199,16 @@ public class ProductController {
 		item.setIsNew(isNew);
 		item.setIsActive(isActive);
 		item.setBrand(brandService.findById(brandId));
+		item.setCategory(categotyService.findById(categoryId));
 		item.setUpdatedAt(LocalDateTime.now());
 
-		Set<Category> newListCate = new HashSet<Category>();
-		for (Integer cateId : categories) {
-			Category cate = categotyService.findById(cateId);
-			newListCate.add(cate);
-		}
-
-		item.setCategories(newListCate);
+//		Set<Category> newListCate = new HashSet<Category>();
+//		for (Integer cateId : categories) {
+//			Category cate = categotyService.findById(cateId);
+//			newListCate.add(cate);
+//		}
+//
+//		item.setCategories(newListCate);
 
 		Product updateItem = productService.save(item);
 		System.out.println(updateItem.getImage());
@@ -285,6 +324,14 @@ public class ProductController {
 			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 					.path(product.getImage()).toUriString();
 			product.setImage(fileDownloadUri);
+			
+//			String more = "";
+//			for (String image : product.getImage().split(",")) {
+//				String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+//						.path(image).toUriString();
+//				more = more.concat(fileDownloadUri1).concat(",");
+//			}
+//			product.setMoreImage(more.substring(0, more.length()-1));
 		}
 		
 		

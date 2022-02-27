@@ -60,9 +60,9 @@ public class Voucher {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "voucher" )
-	private Set<Order> orders;
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "voucher" )
+//	private Set<Order> orders;
 
 //	Constructor
 	public Voucher() {
@@ -195,13 +195,13 @@ public class Voucher {
 		this.isActive = isActive;
 	}
 
-	public Set<Order> getOrders() {
-		return orders;
-	}
-
-	public void setOrders(Set<Order> orders) {
-		this.orders = orders;
-	}
+//	public Set<Order> getOrders() {
+//		return orders;
+//	}
+//
+//	public void setOrders(Set<Order> orders) {
+//		this.orders = orders;
+//	}
 	
 	
 

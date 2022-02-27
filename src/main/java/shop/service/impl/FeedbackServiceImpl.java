@@ -48,11 +48,11 @@ public class FeedbackServiceImpl implements FeedbackService{
 		return feedbackRepository.findAllPage(pageable);
 	}
 
-	@Override
-	public List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return feedbackRepository.findAllByIsRead(isRead, pageable);
-	}
+//	@Override
+//	public List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable) {
+//		// TODO Auto-generated method stub
+//		return feedbackRepository.findAllByIsRead(isRead, pageable);
+//	}
 
 
 

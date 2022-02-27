@@ -19,6 +19,6 @@ public interface FeedbackService {
 //	bo sung them
 	List<Feedback> findAllPage(Pageable pageable);
 	
-	List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable);
+//	List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable);
 
 }

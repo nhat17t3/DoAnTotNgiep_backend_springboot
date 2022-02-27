@@ -25,8 +25,8 @@ public class CategoryArticle {
 	@Column
 	private String name;
 
-	@Column
-	private String slug;
+//	@Column
+//	private String slug;
 
 	@Column(name = "is_active")
 	private boolean isActive;
@@ -47,10 +47,10 @@ public class CategoryArticle {
 		super();
 	}
 
-	public CategoryArticle(String name, String slug, boolean isActive, LocalDateTime createdAt) {
+	public CategoryArticle(String name,  boolean isActive, LocalDateTime createdAt) {
 		super();
 		this.name = name;
-		this.slug = slug;
+//		this.slug = slug;
 		this.isActive = isActive;
 		this.createdAt = createdAt;
 	}
@@ -81,13 +81,13 @@ public class CategoryArticle {
 		this.name = name;
 	}
 
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
+//	public String getSlug() {
+//		return slug;
+//	}
+//
+//	public void setSlug(String slug) {
+//		this.slug = slug;
+//	}
 
 	public boolean getIsActive() {
 		return isActive;

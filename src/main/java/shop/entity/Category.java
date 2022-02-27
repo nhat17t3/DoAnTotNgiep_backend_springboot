@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,8 +27,11 @@ public class Category {
 	@Column
 	private String name;
 
-	@Column
-	private String slug;
+//	@Column
+//	private String slug;
+	
+	@Column(name = "image")
+	private String image;
 
 	@Column(name = "parent_id")
 	private int parentId;
@@ -41,8 +45,12 @@ public class Category {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
+//	@JsonIgnore
+//	@ManyToMany(mappedBy = "categories", cascade = { CascadeType.PERSIST})
+//	private Set<Product> products;
+	
 	@JsonIgnore
-	@ManyToMany(mappedBy = "categories", cascade = { CascadeType.PERSIST})
+	@OneToMany(mappedBy = "category")
 	private Set<Product> products;
 
 //	Constructor
@@ -50,10 +58,10 @@ public class Category {
 		super();
 	}
 
-	public Category(String name, String slug, int parentId, boolean isActive) {
+	public Category(String name, int parentId, boolean isActive) {
 		super();
 		this.name = name;
-		this.slug = slug;
+//		this.slug = slug;
 		this.parentId = parentId;
 		this.isActive = isActive;
 	}
@@ -75,13 +83,13 @@ public class Category {
 		this.name = name;
 	}
 
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
+//	public String getSlug() {
+//		return slug;
+//	}
+//
+//	public void setSlug(String slug) {
+//		this.slug = slug;
+//	}
 
 	public int getParentId() {
 		return parentId;
@@ -121,6 +129,14 @@ public class Category {
 
 	public void setProducts(Set<Product> products) {
 		this.products = products;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 	
 	

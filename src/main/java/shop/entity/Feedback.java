@@ -32,8 +32,8 @@ public class Feedback {
 	@Column
 	private String phone;
 
-	@Column(name = "is_read")
-	private boolean isRead;
+//	@Column(name = "is_read")
+//	private boolean isRead;
 
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
@@ -44,7 +44,7 @@ public class Feedback {
 		super();
 	}
 
-	public Feedback(String title, String content, String name, String email, String phone, boolean isRead,
+	public Feedback(String title, String content, String name, String email, String phone,
 			LocalDateTime createdAt) {
 		super();
 		this.title = title;
@@ -52,7 +52,7 @@ public class Feedback {
 		this.name = name;
 		this.email = email;
 		this.phone = phone;
-		this.isRead = isRead;
+//		this.isRead = isRead;
 		this.createdAt = createdAt;
 	}
 
@@ -105,13 +105,13 @@ public class Feedback {
 		this.phone = phone;
 	}
 
-	public boolean getIsRead() {
-		return isRead;
-	}
-
-	public void setIsRead(boolean isRead) {
-		this.isRead = isRead;
-	}
+//	public boolean getIsRead() {
+//		return isRead;
+//	}
+//
+//	public void setIsRead(boolean isRead) {
+//		this.isRead = isRead;
+//	}
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;

@@ -26,10 +26,10 @@ import shop.entity.Order;
 import shop.entity.OrderDetail;
 import shop.service.OrderDetailService;
 import shop.service.OrderService;
-import shop.service.PaymentService;
+//import shop.service.PaymentService;
 import shop.service.ProductService;
 import shop.service.UserService;
-import shop.service.VoucherService;
+//import shop.service.VoucherService;
 
 @RestController
 @RequestMapping("/api")
@@ -41,11 +41,11 @@ public class OrderController {
 	@Autowired
 	UserService userService;
 
-	@Autowired
-	PaymentService paymentService;
+//	@Autowired
+//	PaymentService paymentService;
 
-	@Autowired
-	VoucherService voucherService;
+//	@Autowired
+//	VoucherService voucherService;
 
 	@Autowired
 	ProductService productService;
@@ -78,8 +78,9 @@ public class OrderController {
 
 		Order item = new Order();
 		item.setUser(userService.findById(form.getUserId()));
-		item.setPayment(paymentService.findById(form.getPaymentId()));
-		item.setVoucher(voucherService.findById(form.getVoucherId()));
+//		item.setPayment(paymentService.findById(form.getPaymentId()));
+		item.setPaymentType(form.getPaymentType());
+//		item.setVoucher(voucherService.findById(form.getVoucherId()));
 		item.setNameReceiver(form.getNameReceiver());
 		item.setPhoneReceiver(form.getPhoneReceiver());
 		item.setAddressReceiver(form.getAddressReceiver());
@@ -121,8 +122,10 @@ public class OrderController {
 
 
 		if(form.getIsConfirm()== true) item.setConfirmAt(LocalDateTime.now());
-		if(form.getIsPay() == true) item.setPayAt(LocalDateTime.now());
+		if(form.getIsPay() == true) item.setPaymentStatus(true);
+		if(form.getIsDone() == true) item.setDoneAt(LocalDateTime.now());
 		if(form.getIsCancle()== true) item.setCancleAt(LocalDateTime.now());
+		if(form.getCancleReason() != null) item.setCancleReason(form.getCancleReason());;
 
 		Order updateItem = orderService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "update Order success", updateItem);
