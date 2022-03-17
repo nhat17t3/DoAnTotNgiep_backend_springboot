@@ -10,6 +10,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,17 +68,27 @@ public class ProductController {
 		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 				.path(item.getImage()).toUriString();
 		item.setImage(fileDownloadUri);
+
+		String moreImage = "";
+		for (String image : item.getMoreImage().split(",")) {
+			String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/").path(image)
+					.toUriString();
+			System.out.println(fileDownloadUri1);
+			moreImage = moreImage.concat(fileDownloadUri1).concat(",");
+		}
+		item.setMoreImage(moreImage.substring(0, moreImage.length() - 1));
+
 		ResponseObject resposeObject = new ResponseObject("success", "find Product by id success", item);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
 //	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/products")
-	public ResponseEntity<ResponseObject> createProduct(@RequestParam String name,
-			@RequestParam String code, @RequestParam MultipartFile image,@RequestParam MultipartFile[] moreImage, @RequestParam double unitPrice,
+	public ResponseEntity<ResponseObject> createProduct(@RequestParam String name, @RequestParam String code,
+			@RequestParam MultipartFile image, @RequestParam MultipartFile[] moreImage, @RequestParam double unitPrice,
 			@RequestParam double promotionPrice, @RequestParam int instock, @RequestParam String shortDesc,
 			@RequestParam String description, @RequestParam String ingredient, @RequestParam String specification,
-			@RequestParam boolean isHot, @RequestParam boolean isNew, @RequestParam boolean isActive,
+			@RequestParam boolean isHot, @RequestParam boolean isActive,
 			@RequestParam int brandId, @RequestParam int categoryId) {
 
 		Product item = new Product();
@@ -93,38 +104,36 @@ public class ProductController {
 		item.setIngredient(ingredient);
 		item.setSpecification(specification);
 		item.setIsHot(isHot);
-		item.setIsNew(isNew);
 		item.setIsActive(isActive);
 
 		try {
-			String fileName ;
+			String fileName;
 			fileName = storageService.save(image);
 			item.setImage(fileName);
-			
+
 		} catch (Exception e) {
 			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		try {
 			List<String> fileNames = new ArrayList<>();
-		      Arrays.asList(moreImage).stream().forEach(file -> {
-		       String fileK = storageService.save(file);
-		        fileNames.add(fileK);
-		        fileNames.add(",");
-		      });
-		     String ooo = "";
-		      for (int i = 0; i < fileNames.size() -1; i++) {
-		    	  ooo = ooo.concat(fileNames.get(i));
+			Arrays.asList(moreImage).stream().forEach(file -> {
+				String fileK = storageService.save(file);
+				fileNames.add(fileK);
+				fileNames.add(",");
+			});
+			String ooo = "";
+			for (int i = 0; i < fileNames.size() - 1; i++) {
+				ooo = ooo.concat(fileNames.get(i));
 			}
-		      item.setMoreImage(ooo);
-			
+			item.setMoreImage(ooo);
+
 		} catch (Exception e) {
 			ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		
+
 		item.setCreatedAt(LocalDateTime.now());
 		item.setBrand(brandService.findById(brandId));
 		item.setCategory(categotyService.findById(categoryId));
@@ -143,12 +152,12 @@ public class ProductController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/products/{id}")
 	public ResponseEntity<ResponseObject> updateProduct(@PathVariable(value = "id") int id, @RequestParam String name,
-			 @RequestParam String code, @RequestParam(required = false) MultipartFile image,
-			@RequestParam (required = false) MultipartFile[] moreImage,
-			@RequestParam double unitPrice, @RequestParam double promotionPrice, @RequestParam int instock,
-			@RequestParam String shortDesc, @RequestParam String description, @RequestParam String ingredient,
-			@RequestParam String specification, @RequestParam boolean isHot, @RequestParam boolean isNew,
-			@RequestParam boolean isActive, @RequestParam int brandId, @RequestParam int categoryId) {
+			@RequestParam String code, @RequestParam(required = false) MultipartFile image,
+			@RequestParam(required = false) MultipartFile[] moreImage, @RequestParam double unitPrice,
+			@RequestParam double promotionPrice, @RequestParam int instock, @RequestParam String shortDesc,
+			@RequestParam String description, @RequestParam String ingredient, @RequestParam String specification,
+			@RequestParam boolean isHot, @RequestParam boolean isActive,
+			@RequestParam int brandId, @RequestParam int categoryId) {
 		Product item = productService.findById(id);
 		if (item == null) {
 			return ResponseEntity.notFound().build();
@@ -168,17 +177,17 @@ public class ProductController {
 		if (moreImage != null) {
 			try {
 				List<String> fileNames = new ArrayList<>();
-			      Arrays.asList(moreImage).stream().forEach(file -> {
-			       String fileK = storageService.save(file);
-			        fileNames.add(fileK);
-			        fileNames.add(",");
-			      });
-			     String ooo = "";
-			      for (int i = 0; i < fileNames.size() -1; i++) {
-			    	  ooo = ooo.concat(fileNames.get(i));
+				Arrays.asList(moreImage).stream().forEach(file -> {
+					String fileK = storageService.save(file);
+					fileNames.add(fileK);
+					fileNames.add(",");
+				});
+				String ooo = "";
+				for (int i = 0; i < fileNames.size() - 1; i++) {
+					ooo = ooo.concat(fileNames.get(i));
 				}
-			      item.setMoreImage(ooo);
-				
+				item.setMoreImage(ooo);
+
 			} catch (Exception e) {
 				ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
 				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -196,7 +205,6 @@ public class ProductController {
 		item.setIngredient(ingredient);
 		item.setSpecification(specification);
 		item.setIsHot(isHot);
-		item.setIsNew(isNew);
 		item.setIsActive(isActive);
 		item.setBrand(brandService.findById(brandId));
 		item.setCategory(categotyService.findById(categoryId));
@@ -289,7 +297,7 @@ public class ProductController {
 	@GetMapping("/products")
 	public ResponseEntity<ResponseObject> getListProductPage(@RequestParam(value = "limit", required = true) int limit,
 			@RequestParam(value = "page", required = true) int page,
-			@RequestParam(value = "sortBy", required = false) String sortBy) {
+			@RequestParam(defaultValue = "test", required = false) String sortBy) {
 		Pageable pageable = PageRequest.of(page, limit);
 		List<Product> list = new ArrayList<Product>();
 		switch (sortBy) {
@@ -306,40 +314,112 @@ public class ProductController {
 			list = productService.findAllPage(pageable);
 			break;
 		}
-		
 
-//		if (listCate.isEmpty()) {
-//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//		}
-		
-//		List<Product> kkk = productService.findAll();
-//		long count = 0L;
-//		for (Product product : kkk) {
-//			count ++;
-//		}
-		
 		long count = productService.count();
-		
+
 		for (Product product : list) {
 			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
 					.path(product.getImage()).toUriString();
 			product.setImage(fileDownloadUri);
-			
-//			String more = "";
-//			for (String image : product.getImage().split(",")) {
-//				String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
-//						.path(image).toUriString();
-//				more = more.concat(fileDownloadUri1).concat(",");
-//			}
-//			product.setMoreImage(more.substring(0, more.length()-1));
+
+			String moreImage = "";
+			for (String image : product.getMoreImage().split(",")) {
+				String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+						.path(image).toUriString();
+				System.out.println(fileDownloadUri1);
+				moreImage = moreImage.concat(fileDownloadUri1).concat(",");
+			}
+			product.setMoreImage(moreImage.substring(0, moreImage.length() - 1));
 		}
-		
-		
+
 		ResponseObject resposeObject = new ResponseObject("success", "find all Product by page", list);
-		
+
 		System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuu" + list);
 		resposeObject.setCount(count);
 		System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuu" + list);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
+
+//	@GetMapping("/products/all")
+//	public ResponseEntity<ResponseObject> getListProduct() {
+//		List<Product> list = productService.findAll();
+////		if (list.isEmpty()) {
+////			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+////		}
+//		
+//		for (Product product : list) {
+//			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+//					.path(product.getImage()).toUriString();
+//			product.setImage(fileDownloadUri);
+//		}
+//		ResponseObject resposeObject = new ResponseObject("success", "find all Product success", list);
+//		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+//	}
+
+	@GetMapping("/products/pro")
+	public ResponseEntity<ResponseObject> getListProductPro(@RequestParam(name = "limit", required = true) int limit,
+			@RequestParam(name = "page", required = true) int page,
+			@RequestParam(defaultValue = "test", required = false) String sortBy,
+			@RequestParam(defaultValue = "0", required = false) Integer brandId) throws Exception {
+		List<Product> list = new ArrayList<Product>();
+
+		if (brandId != 0) {
+			switch (sortBy) {
+			case "createdAtDESC":
+//				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit, Sort.by("createdAt")));
+				list = productService.findAllCreatedAtDESC(PageRequest.of(page, limit));
+				break;
+			case "PriceASC":
+				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit, Sort.by("promotionPrice")));
+				break;
+			case "PriceDESC":
+				list = productService.findAllByBrandId(brandId,
+						PageRequest.of(page, limit, Sort.by("promotionPrice").descending()));
+				break;
+			default:
+				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit));
+				break;
+			}
+		} else {
+			switch (sortBy) {
+			case "createdAtDESC":
+//				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("createdAt").descending()));
+				list = productService.findAllCreatedAtDESC(PageRequest.of(page, limit));
+				break;
+			case "PriceASC":
+				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("promotionPrice")));
+				break;
+			case "PriceDESC":
+				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("promotionPrice").descending()));
+				break;
+			default:
+				list = productService.findAllPage(PageRequest.of(page, limit));
+				break;
+			}
+		}
+
+//		if (list.isEmpty()) {
+//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//		}
+
+		long count = productService.count();
+
+		for (Product product : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(product.getImage()).toUriString();
+			product.setImage(fileDownloadUri);
+
+			String moreImage = "";
+			for (String image : product.getMoreImage().split(",")) {
+				String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+						.path(image).toUriString();
+				System.out.println(fileDownloadUri1);
+				moreImage = moreImage.concat(fileDownloadUri1).concat(",");
+			}
+			product.setMoreImage(moreImage.substring(0, moreImage.length() - 1));
+		}
+		ResponseObject resposeObject = new ResponseObject("success", "find all Product success", list);
+		resposeObject.setCount(count);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

@@ -1,5 +1,6 @@
 package shop.controller;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import shop.DTO.ArticleRequest;
 import shop.DTO.ResponseObject;
 import shop.entity.Article;
+import shop.entity.Brand;
 import shop.service.ArticleService;
 import shop.service.CategoryArticleService;
+import shop.service.FilesStorageService;
 
 @RestController
 @RequestMapping("/api")
@@ -31,6 +36,9 @@ public class ArticleController {
 
 	@Autowired
 	ArticleService articleService;
+	
+	@Autowired
+	FilesStorageService storageService;
 
 	@Autowired
 	CategoryArticleService categoryArticleService;
@@ -54,17 +62,38 @@ public class ArticleController {
 		item.setView(item.getView() + 1);
 		Article newitem = articleService.save(item);
 		
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+				.path(newitem.getImage()).toUriString();
+		newitem.setImage(fileDownloadUri);
+		
 		ResponseObject resposeObject = new ResponseObject("success", "find Article by id success", newitem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/articles")
-	public ResponseEntity<ResponseObject> createArticle(@RequestBody ArticleRequest form) {
-		Article item = new Article(form.getName(), form.getSlug(), form.getIsHot(), form.getShortDesc(),
-				form.getDescription(), form.getIsActive(), LocalDateTime.now());
+	public ResponseEntity<ResponseObject> createArticle(@RequestParam String name,@RequestParam String shortDesc,
+			@RequestParam String description,@RequestParam int categoryArticleId,
+			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
+		Article item = new Article();
+		
+		item.setName(name);
+//		item.setIsHot(form.getIsHot());
+		item.setShortDesc(shortDesc);
+		item.setDescription(description);
+		item.setIsActive(isActive);
+		item.setCreatedAt(LocalDateTime.now());
+		item.setCategoryArticle(categoryArticleService.findById(categoryArticleId));
 
-		item.setCategoryArticle(categoryArticleService.findById(form.getCategoryArticleId()));
+		try {
+			String fileName;
+			fileName = storageService.save(image);
+			item.setImage(fileName);
+
+		} catch (Exception e) {
+			ResponseObject resposeObject = new ResponseObject("error", "error create article", e.getMessage());
+			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 		Article newItem = articleService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "create Article success", newItem);
@@ -73,20 +102,34 @@ public class ArticleController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/articles/{id}")
-	public ResponseEntity<ResponseObject> updateArticle(@PathVariable(value = "id") int id, @RequestBody ArticleRequest form) {
+	public ResponseEntity<ResponseObject> updateArticle(@PathVariable(value = "id") int id, @RequestParam String name,@RequestParam String shortDesc,
+			@RequestParam String description,@RequestParam int categoryArticleId,
+			@RequestParam(required = false) MultipartFile image, @RequestParam boolean isActive) throws IOException {
 		Article item = articleService.findById(id);
 		if (item == null) {
 			return ResponseEntity.notFound().build();
 		}
+		
+		if (image != null) {
+			try {
+				String fileName;
+				fileName = storageService.save(image);
+				item.setImage(fileName);
 
-		item.setName(form.getName());
-		item.setSlug(form.getSlug());
-		item.setIsHot(form.getIsHot());
-		item.setShortDesc(form.getShortDesc());
-		item.setDescription(form.getDescription());
-		item.setIsActive(form.getIsActive());
+			} catch (Exception e) {
+				ResponseObject resposeObject = new ResponseObject("error", "error create product", e.getMessage());
+				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		item.setName(name);
+//		item.setIsHot(form.getIsHot());
+		item.setShortDesc(shortDesc);
+		item.setDescription(description);
+		item.setIsActive(isActive);
 		item.setUpdatedAt(LocalDateTime.now());
-		item.setCategoryArticle(categoryArticleService.findById(form.getCategoryArticleId()));
+		item.setCategoryArticle(categoryArticleService.findById(categoryArticleId));
+
 
 		Article updateItem = articleService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "update Article success", updateItem);
@@ -122,8 +165,18 @@ public class ArticleController {
 			@RequestParam(value = "page", required = true) int page) {
 		Pageable pageable = PageRequest.of(page, limit);
 		List<Article> list = articleService.findAllAndPage(pageable);
+		
+		long count = articleService.count();
+		
+		for (Article brand : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(brand.getImage()).toUriString();
+			brand.setImage(fileDownloadUri);
+		}
+		
+		
 		ResponseObject resposeObject = new ResponseObject("success", "find all Article by page", list);
-		resposeObject.setCount(articleService.count());
+		resposeObject.setCount(count);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

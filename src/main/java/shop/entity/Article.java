@@ -24,10 +24,10 @@ public class Article {
 	private String name;
 
 	@Column
-	private String slug;
+	private String image;
 
-	@Column(name = "is_hot")
-	private Boolean isHot;
+//	@Column(name = "is_hot")
+//	private Boolean isHot;
 
 	@Column
 	private int view;
@@ -56,18 +56,7 @@ public class Article {
 		super();
 	}
 
-	public Article(String name, String slug, Boolean isHot,  String shortDesc, String desciption,
-			Boolean isActive, LocalDateTime createdAt) {
-		super();
-		this.name = name;
-		this.slug = slug;
-		this.isHot = isHot;
-		this.shortDesc = shortDesc;
-		this.description = desciption;
-		this.isActive = isActive;
-		this.createdAt = createdAt;
-	}
-
+	
 	// getter and setter
 	
 	
@@ -119,21 +108,21 @@ public class Article {
 		this.updatedAt = time;
 	}
 
-	public String getSlug() {
-		return slug;
-	}
+//	public String getSlug() {
+//		return slug;
+//	}
+//
+//	public void setSlug(String slug) {
+//		this.slug = slug;
+//	}
 
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
-
-	public boolean getIsHot() {
-		return isHot;
-	}
-
-	public void setIsHot(Boolean isHot) {
-		this.isHot = isHot;
-	}
+//	public boolean getIsHot() {
+//		return isHot;
+//	}
+//
+//	public void setIsHot(Boolean isHot) {
+//		this.isHot = isHot;
+//	}
 
 	public int getView() {
 		return view;
@@ -162,5 +151,15 @@ public class Article {
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
+	
 
 }

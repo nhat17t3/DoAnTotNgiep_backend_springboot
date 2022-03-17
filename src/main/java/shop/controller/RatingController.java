@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import shop.DTO.RatingRequest;
 import shop.DTO.ResponseObject;
+import shop.entity.Brand;
 import shop.entity.Rating;
 import shop.entity.UserProductKey;
 import shop.entity.Voucher;
@@ -125,6 +127,12 @@ public class RatingController {
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		
+		for (Rating rating : listCate) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(rating.getProduct().getImage()).toUriString();
+			rating.getProduct().setImage(fileDownloadUri);
+		}
 		ResponseObject resposeObject = new ResponseObject("success", "find all Rating by page", listCate);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}

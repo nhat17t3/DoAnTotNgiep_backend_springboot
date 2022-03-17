@@ -38,7 +38,7 @@ public class BrandController {
 	FilesStorageService storageService;
 
 	
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+//	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 	@GetMapping("/brands")
 	public ResponseEntity<ResponseObject> getListBrand() {
 		List<Brand> listBrand = brandService.findAll();

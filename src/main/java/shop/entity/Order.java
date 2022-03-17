@@ -34,6 +34,10 @@ public class Order {
 
 	@Column(name = "address_receiver")
 	private String addressReceiver;
+	
+	@Column(name = "email_receiver")
+	private String emailReceiver;
+
 
 	@Column
 	private double total;
@@ -57,8 +61,8 @@ public class Order {
 //	@Column(name = "pay_at")
 //	private LocalDateTime payAt;
 	
-	@Column(name = "payment_type")
-	private String paymentType;
+//	@Column(name = "payment_type")
+//	private String paymentType;
 	
 	@Column(name = "payment_status")
 	private Boolean paymentStatus;
@@ -91,9 +95,14 @@ public class Order {
 
 	
 //	@JsonIgnore
-//	@ManyToOne
-//	@JoinColumn(name = "payment_id", nullable = false)
-//	private Payment payment;
+	@ManyToOne
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+	
+//	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "delivery_id")
+	private Delivery delivery;
 
 	
 //	@JsonIgnore
@@ -284,13 +293,13 @@ public class Order {
 		this.status = status;
 	}
 
-	public String getPaymentType() {
-		return paymentType;
-	}
-
-	public void setPaymentType(String paymentType) {
-		this.paymentType = paymentType;
-	}
+//	public String getPaymentType() {
+//		return paymentType;
+//	}
+//
+//	public void setPaymentType(String paymentType) {
+//		this.paymentType = paymentType;
+//	}
 
 	public Boolean getPaymentStatus() {
 		return paymentStatus;
@@ -308,6 +317,32 @@ public class Order {
 		this.doneAt = doneAt;
 	}
 
+	public Payment getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Payment payment) {
+		this.payment = payment;
+	}
+
+	public String getEmailReceiver() {
+		return emailReceiver;
+	}
+
+	public void setEmailReceiver(String emailReceiver) {
+		this.emailReceiver = emailReceiver;
+	}
+
+	public Delivery getDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(Delivery delivery) {
+		this.delivery = delivery;
+	}
+
+	
+	
 	
 	// getter and setter
 

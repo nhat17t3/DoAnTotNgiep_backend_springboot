@@ -3,22 +3,19 @@ package shop.entity;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "category")
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Category {
+@Table(name = "delivery")
+public class Delivery {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +24,11 @@ public class Category {
 	@Column
 	private String name;
 
-//	@Column
-//	private String slug;
-	
-//	@Column(name = "image")
-//	private String image;
+	@Column
+	private String description;
 
-	@Column(name = "parent_id")
-	private int parentId;
+	@Column
+	private Double fee;
 
 	@Column(name = "is_active")
 	private boolean isActive;
@@ -45,28 +39,49 @@ public class Category {
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 
-//	@JsonIgnore
-//	@ManyToMany(mappedBy = "categories", cascade = { CascadeType.PERSIST})
-//	private Set<Product> products;
-	
 	@JsonIgnore
-	@OneToMany(mappedBy = "category")
-	private Set<Product> products;
+	@OneToMany(mappedBy = "delivery")
+	private Set<Order> orders;
 
 //	Constructor
-	public Category() {
+	public Delivery() {
 		super();
 	}
 
-	public Category(String name, int parentId, boolean isActive) {
+	public Delivery(String name, String description, Double fee, boolean isActive, LocalDateTime createdAt) {
 		super();
 		this.name = name;
-//		this.slug = slug;
-		this.parentId = parentId;
+		this.description = description;
+		this.fee = fee;
 		this.isActive = isActive;
+		this.createdAt = createdAt;
 	}
 
-//	getter and setter
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Double getFee() {
+		return fee;
+	}
+
+	public void setFee(Double fee) {
+		this.fee = fee;
+	}
+
+	public Set<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Order> orders) {
+		this.orders = orders;
+	}
+
+	// getter and setter
 	public int getId() {
 		return id;
 	}
@@ -81,22 +96,6 @@ public class Category {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-//	public String getSlug() {
-//		return slug;
-//	}
-//
-//	public void setSlug(String slug) {
-//		this.slug = slug;
-//	}
-
-	public int getParentId() {
-		return parentId;
-	}
-
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
 	}
 
 	public boolean getIsActive() {
@@ -122,23 +121,5 @@ public class Category {
 	public void setUpdatedAt(LocalDateTime time) {
 		this.updatedAt = time;
 	}
-
-	public Set<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(Set<Product> products) {
-		this.products = products;
-	}
-
-//	public String getImage() {
-//		return image;
-//	}
-//
-//	public void setImage(String image) {
-//		this.image = image;
-//	}
-	
-	
 
 }

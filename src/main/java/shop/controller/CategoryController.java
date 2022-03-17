@@ -42,11 +42,11 @@ public class CategoryController {
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
-		for (Category cate : listCate) {
-			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
-					.path(cate.getImage()).toUriString();
-			cate.setImage(fileDownloadUri);
-		}
+//		for (Category cate : listCate) {
+//			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+//					.path(cate.getImage()).toUriString();
+//			cate.setImage(fileDownloadUri);
+//		}
 		ResponseObject resposeObject = new ResponseObject("success", "find all category success", listCate);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -58,34 +58,33 @@ public class CategoryController {
 			return ResponseEntity.notFound().build();
 		}
 		
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
-				.path(cate.getImage()).toUriString();
-		cate.setImage(fileDownloadUri);
+//		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+//				.path(cate.getImage()).toUriString();
+//		cate.setImage(fileDownloadUri);
 		ResponseObject resposeObject = new ResponseObject("success", "find categoty by id success", cate);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/categories")
-	public ResponseEntity<ResponseObject> createCategory(@RequestParam String name,@RequestParam int parentId,
-			@RequestParam MultipartFile image, @RequestParam boolean isActive) throws IOException {
+	public ResponseEntity<ResponseObject> createCategory(@RequestBody Category form) throws IOException {
 		
 		
 		Category cate = new Category();
-		cate.setName(name);
+		cate.setName(form.getName());
 //		cate.setSlug(form.getSlug());
-		cate.setParentId(parentId);
-		cate.setIsActive(isActive);
+		cate.setParentId(form.getParentId());
+		cate.setIsActive(form.getIsActive());
 		cate.setCreatedAt(LocalDateTime.now());
-		try {
-			String fileName;
-			fileName = storageService.save(image);
-			cate.setImage(fileName);
-
-		} catch (Exception e) {
-			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
-			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+//		try {
+//			String fileName;
+//			fileName = storageService.save(image);
+//			cate.setImage(fileName);
+//
+//		} catch (Exception e) {
+//			ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
+//			return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+//		}
 		Category newCate = categoryService.save(cate);
 		ResponseObject resposeObject = new ResponseObject("success", "create categoty success", newCate);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
@@ -93,32 +92,30 @@ public class CategoryController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/categories/{id}")
-	public ResponseEntity<ResponseObject> updateCategory(@PathVariable(value = "id") int id, @RequestParam String name,
-			 @RequestParam(required = false) MultipartFile image,@RequestParam int parentId,
-			@RequestParam boolean isActive) throws IOException {
+	public ResponseEntity<ResponseObject> updateCategory(@PathVariable(value = "id") int id, @RequestBody Category form) throws IOException {
 		Category cate = categoryService.findById(id);
 		if (cate == null) {
 			return ResponseEntity.notFound().build();
 		}
 
-		cate.setName(name);
+		cate.setName(form.getName());
 //		cate.setSlug(form.getSlug());
-		cate.setParentId(parentId);
-		cate.setIsActive(isActive);
+		cate.setParentId(form.getParentId());
+		cate.setIsActive(form.getIsActive());
 		LocalDateTime time = LocalDateTime.now();
 		cate.setUpdatedAt(time);
 		
-		if (image != null) {
-			try {
-				String fileName;
-				fileName = storageService.save(image);
-				cate.setImage(fileName);
-
-			} catch (Exception e) {
-				ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
-				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
+//		if (image != null) {
+//			try {
+//				String fileName;
+//				fileName = storageService.save(image);
+//				cate.setImage(fileName);
+//
+//			} catch (Exception e) {
+//				ResponseObject resposeObject = new ResponseObject("error", "error create brand", e.getMessage());
+//				return new ResponseEntity<>(resposeObject, HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
+//		}
 
 		Category updateCate = categoryService.save(cate);
 		ResponseObject resposeObject = new ResponseObject("success", "update categoty success", updateCate);

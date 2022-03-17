@@ -1,5 +1,6 @@
 package shop.controller;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import shop.DTO.LoginRequest;
@@ -24,6 +26,7 @@ import shop.DTO.SignUpRequest;
 import shop.entity.Role;
 import shop.entity.User;
 import shop.security.JwtTokenProvider;
+import shop.security.UserPrincipal;
 import shop.service.RoleService;
 import shop.service.UserService;
 
@@ -46,6 +49,29 @@ public class AuthController {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 	
+	@PostMapping("/updatePassword")
+	public ResponseEntity<ResponseObject> changeUserPassword( @RequestParam String newPassword, 
+	  @RequestParam String oldPassword) {
+		
+		
+		User user = userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())  ;
+		if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+		    // Encode new password and store it
+			System.out.println("vvvvvvvvvv");
+			user.setPassword(passwordEncoder.encode(newPassword));
+			userService.save(user);
+			ResponseObject resposeObject = new ResponseObject("success", "change pass user", "update pass success");
+			return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+		} else {
+		    // Report error 
+			ResponseObject resposeObject = new ResponseObject("error", "change pass user", "update pass error");
+			return new ResponseEntity<>(resposeObject, HttpStatus.BAD_REQUEST);
+		}
+		
+		
+		
+	}
+	
 	@PostMapping("/getInfor")
 	public ResponseEntity<ResponseObject> getInformationUser(@RequestBody LoginRequest token) {
 
@@ -66,6 +92,9 @@ public class AuthController {
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+		System.out.println("userPrincipal");
+		if(userPrincipal.getIsActive() == false ) return new ResponseEntity<>(new ResponseObject("success", "Login success", "đéo được vào đâu bạn"), HttpStatus.BAD_REQUEST);
 		String jwt = jwtTokenProvider.generateToken(authentication);
 
 		ResponseObject resposeObject = new ResponseObject("success", "Login success", jwt);

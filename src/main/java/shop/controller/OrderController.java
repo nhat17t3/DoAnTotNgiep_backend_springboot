@@ -26,6 +26,7 @@ import shop.entity.Order;
 import shop.entity.OrderDetail;
 import shop.service.OrderDetailService;
 import shop.service.OrderService;
+import shop.service.PaymentService;
 //import shop.service.PaymentService;
 import shop.service.ProductService;
 import shop.service.UserService;
@@ -41,8 +42,8 @@ public class OrderController {
 	@Autowired
 	UserService userService;
 
-//	@Autowired
-//	PaymentService paymentService;
+	@Autowired
+	PaymentService paymentService;
 
 //	@Autowired
 //	VoucherService voucherService;
@@ -78,12 +79,13 @@ public class OrderController {
 
 		Order item = new Order();
 		item.setUser(userService.findById(form.getUserId()));
-//		item.setPayment(paymentService.findById(form.getPaymentId()));
-		item.setPaymentType(form.getPaymentType());
+		item.setPayment(paymentService.findById(form.getPaymentId()));
+//		item.setPaymentType(form.getPaymentType());
 //		item.setVoucher(voucherService.findById(form.getVoucherId()));
 		item.setNameReceiver(form.getNameReceiver());
 		item.setPhoneReceiver(form.getPhoneReceiver());
 		item.setAddressReceiver(form.getAddressReceiver());
+		item.setEmailReceiver(form.getEmailReceiver());
 		item.setTotal(form.getTotal());
 		item.setDiscount(form.getDiscount());
 		item.setShippingFee(form.getShippingFee());
@@ -125,7 +127,8 @@ public class OrderController {
 		if(form.getIsPay() == true) item.setPaymentStatus(true);
 		if(form.getIsDone() == true) item.setDoneAt(LocalDateTime.now());
 		if(form.getIsCancle()== true) item.setCancleAt(LocalDateTime.now());
-		if(form.getCancleReason() != null) item.setCancleReason(form.getCancleReason());;
+		if(form.getCancleReason() != null) item.setCancleReason(form.getCancleReason());
+		if(form.getStatus() != null) item.setStatus(form.getStatus());;
 
 		Order updateItem = orderService.save(item);
 		ResponseObject resposeObject = new ResponseObject("success", "update Order success", updateItem);

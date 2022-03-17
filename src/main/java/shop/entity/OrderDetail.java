@@ -32,7 +32,7 @@ public class OrderDetail implements Serializable {
 	@JoinColumn(name = "order_id")
 	private Order order;
 
-	@JsonIgnore
+//	@JsonIgnore
 	@ManyToOne(fetch = FetchType.EAGER)
 	@MapsId("productId")
 	@JoinColumn(name = "product_id")

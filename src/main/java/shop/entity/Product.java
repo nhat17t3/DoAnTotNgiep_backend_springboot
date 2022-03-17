@@ -66,8 +66,8 @@ public class Product {
 	@Column(name = "is_hot")
 	private Boolean isHot;
 
-	@Column(name = "is_new")
-	private Boolean isNew;
+	@Column(name = "total_sale")
+	private Integer totalSale;
 
 	@Column(name = "is_active")
 	private Boolean isActive;
@@ -112,7 +112,7 @@ public class Product {
 	}
 
 	public Product(String name, String code, double unitPrice, double promotionPrice, int instock,
-			String shortDesc, String description, String ingredient, String specification, Boolean isHot, Boolean isNew,
+			String shortDesc, String description, String ingredient, String specification, Boolean isHot,
 			Boolean isActive) {
 		super();
 		this.name = name;
@@ -126,7 +126,6 @@ public class Product {
 		this.ingredient = ingredient;
 		this.specification = specification;
 		this.isHot = isHot;
-		this.isNew = isNew;
 		this.isActive = isActive;
 	}
 
@@ -244,12 +243,14 @@ public class Product {
 		this.isHot = isHot;
 	}
 
-	public Boolean getIsNew() {
-		return isNew;
+
+
+	public Integer getTotalSale() {
+		return totalSale;
 	}
 
-	public void setIsNew(Boolean isNew) {
-		this.isNew = isNew;
+	public void setTotalSale(Integer totalSale) {
+		this.totalSale = totalSale;
 	}
 
 	public Boolean getIsActive() {

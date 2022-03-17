@@ -169,8 +169,9 @@ public class UserController {
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		long count = userService.count();
 		ResponseObject resposeObject = new ResponseObject("success", "findAll User by page", listCate);
-		resposeObject.setCount(userService.count());
+		resposeObject.setCount(count);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

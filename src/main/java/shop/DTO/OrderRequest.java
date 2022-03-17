@@ -8,7 +8,7 @@ public class OrderRequest {
 
 //	private int voucherId;
 
-//	private int paymentId;
+	private int paymentId;
 	
 	private String paymentType;
 	
@@ -19,6 +19,8 @@ public class OrderRequest {
 	private String phoneReceiver;
 
 	private String addressReceiver;
+	
+	private String emailReceiver;
 
 	private double total;
 
@@ -37,6 +39,8 @@ public class OrderRequest {
 	private String cancleReason;
 	
 	private Boolean isDone;
+	
+	private Integer status;
 
 
 	private Set<OrderDetailRequest> orderDetailRequests;
@@ -188,6 +192,33 @@ public class OrderRequest {
 	public void setIsDone(Boolean isDone) {
 		this.isDone = isDone;
 	}
+
+	public int getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(int paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getEmailReceiver() {
+		return emailReceiver;
+	}
+
+	public void setEmailReceiver(String emailReceiver) {
+		this.emailReceiver = emailReceiver;
+	}
+	
+	
+	
 	
 	
 

@@ -26,6 +26,8 @@ public class UserPrincipal implements UserDetails {
 	private String username;
 
 	private String phone;
+	
+	private Boolean isActive;
 
 	@JsonIgnore
 	private String email;
@@ -35,7 +37,7 @@ public class UserPrincipal implements UserDetails {
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserPrincipal(Integer id, String firstName, String lastName, String username, String phone, String email,
+	public UserPrincipal(Integer id,Boolean isActive, String firstName, String lastName, String username, String phone, String email,
 			String password, Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.firstName = firstName;
@@ -43,6 +45,7 @@ public class UserPrincipal implements UserDetails {
 		this.username = username;
 		this.phone = phone;
 		this.email = email;
+		this.isActive = isActive;
 		this.password = password;
 		this.authorities = authorities;
 	}
@@ -51,7 +54,7 @@ public class UserPrincipal implements UserDetails {
 		List<GrantedAuthority> authorities = user.getRoles().stream()
 				.map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 
-		return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
+		return new UserPrincipal(user.getId(),user.getIsActive(), user.getFirstName(), user.getLastName(), user.getUsername(),
 				user.getPhone(), user.getEmail(), user.getPassword(), authorities);
 	}
 
@@ -81,6 +84,11 @@ public class UserPrincipal implements UserDetails {
 		return phone;
 	}
 	
+	
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
 
 	@Override
 	public String getPassword() {

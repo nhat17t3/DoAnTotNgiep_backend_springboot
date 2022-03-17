@@ -12,7 +12,7 @@ import shop.entity.Order;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
 //	find all / sort by id / paging
-	@Query("SELECT e FROM Order e ORDER BY e.id ASC")
+	@Query("SELECT e FROM Order e ORDER BY e.createdAt DESC")
 	List<Order> findAllPage(Pageable pageable);
 
 //	search by name /sort by id/ paging
