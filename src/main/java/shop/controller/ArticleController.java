@@ -2,11 +2,13 @@ package shop.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +28,7 @@ import shop.DTO.ArticleRequest;
 import shop.DTO.ResponseObject;
 import shop.entity.Article;
 import shop.entity.Brand;
+import shop.entity.Product;
 import shop.service.ArticleService;
 import shop.service.CategoryArticleService;
 import shop.service.FilesStorageService;
@@ -154,17 +157,6 @@ public class ArticleController {
 			@RequestParam(value = "page", required = false) int page) {
 		Pageable pageable = PageRequest.of(page, limit);
 		List<Article> list = articleService.findAllByNameAndPage(q, pageable);
-
-		ResponseObject resposeObject = new ResponseObject("success", "search Article by name  ", list);
-		resposeObject.setCount(articleService.count());
-		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
-	}
-
-	@GetMapping("/articles")
-	public ResponseEntity<ResponseObject> getListCategoryPage(@RequestParam(value = "limit", required = true) int limit,
-			@RequestParam(value = "page", required = true) int page) {
-		Pageable pageable = PageRequest.of(page, limit);
-		List<Article> list = articleService.findAllAndPage(pageable);
 		
 		long count = articleService.count();
 		
@@ -173,6 +165,71 @@ public class ArticleController {
 					.path(brand.getImage()).toUriString();
 			brand.setImage(fileDownloadUri);
 		}
+		
+	
+		
+
+		ResponseObject resposeObject = new ResponseObject("success", "search Article by name  ", list);
+		resposeObject.setCount(count);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
+	
+	@GetMapping("/articles/filter")
+	public ResponseEntity<ResponseObject> filterAndPage(
+			@RequestParam(value = "limit", required = false) int limit,
+			@RequestParam(value = "page", required = false) int page,
+			@RequestParam(defaultValue = "default", required = false) String name,
+			@RequestParam(defaultValue = "0", required = false) int categoryArticleId) {
+		Pageable pageable = PageRequest.of(page, limit);
+		
+		List<Article> list = new ArrayList<Article>();
+		
+		if(name!="default" && categoryArticleId !=0) {
+			list = articleService.filterAndPage(name, categoryArticleId, pageable);
+		}
+		else if (name!="default") list = articleService.findAllByNameAndPage(name, pageable);
+		else if(categoryArticleId != 0) list = articleService.findAllByCategoryArticleId(categoryArticleId, pageable);
+		else list = articleService.findAllAndPage(pageable);
+		
+		long count = articleService.count();
+		
+		for (Article brand : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(brand.getImage()).toUriString();
+			brand.setImage(fileDownloadUri);
+		}
+		
+	
+		
+
+		ResponseObject resposeObject = new ResponseObject("success", "search Article by name  ", list);
+		resposeObject.setCount(count);
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
+
+	@GetMapping("/articles")
+	public ResponseEntity<ResponseObject> getListCategoryPage(@RequestParam(value = "limit", required = true) int limit,
+			@RequestParam(value = "page", required = true) int page,
+			@RequestParam(defaultValue = "0", required = false) int categoryArticleId) {
+		Pageable pageable = PageRequest.of(page, limit);
+		
+		List<Article> list = new ArrayList<Article>();
+		
+		if (categoryArticleId != 0) {
+			list = articleService.findAllByCategoryArticleId(categoryArticleId, pageable);
+		}
+		else {
+			list = articleService.findAllAndPage(pageable);
+		}
+		
+		long count = articleService.count();
+		
+		for (Article brand : list) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(brand.getImage()).toUriString();
+			brand.setImage(fileDownloadUri);
+		}
+		
 		
 		
 		ResponseObject resposeObject = new ResponseObject("success", "find all Article by page", list);

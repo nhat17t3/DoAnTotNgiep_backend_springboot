@@ -74,4 +74,10 @@ public class OrderServiceImpl implements OrderService{
 		return orderRepository.count();
 	}
 
+	@Override
+	public List<Order> filterAndPage(String key, int status, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return orderRepository.filterAndPage(key, status, pageable);
+	}
+
 }

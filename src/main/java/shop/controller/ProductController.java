@@ -252,6 +252,8 @@ public class ProductController {
 					.path(product.getImage()).toUriString();
 			product.setImage(fileDownloadUri);
 		}
+		
+		
 		ResponseObject resposeObject = new ResponseObject("success", "search Product by name  ", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -280,7 +282,7 @@ public class ProductController {
 			@RequestParam(value = "limit", required = false) int limit,
 			@RequestParam(value = "page", required = false) int page) {
 		Pageable pageable = PageRequest.of(page, limit);
-		List<Product> list = productService.findAllByCategorieId(id, pageable);
+		List<Product> list = productService.findAllByCategoryId(id, pageable);
 //		if (listCate.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
@@ -360,14 +362,32 @@ public class ProductController {
 	public ResponseEntity<ResponseObject> getListProductPro(@RequestParam(name = "limit", required = true) int limit,
 			@RequestParam(name = "page", required = true) int page,
 			@RequestParam(defaultValue = "test", required = false) String sortBy,
-			@RequestParam(defaultValue = "0", required = false) Integer brandId) throws Exception {
+			@RequestParam(defaultValue = "0", required = false) int brandId,
+			@RequestParam(defaultValue = "0", required = false) int categoryId) throws Exception {
 		List<Product> list = new ArrayList<Product>();
-
-		if (brandId != 0) {
+		
+		if(brandId  != 0 && categoryId !=0)
+		{
 			switch (sortBy) {
 			case "createdAtDESC":
-//				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit, Sort.by("createdAt")));
-				list = productService.findAllCreatedAtDESC(PageRequest.of(page, limit));
+				list = productService.findAllByCategorieIdAndBrandId(categoryId, brandId, PageRequest.of(page, limit, Sort.by("createdAt").descending()));
+				break;
+			case "PriceASC":
+				list = productService.findAllByCategorieIdAndBrandId(categoryId,brandId, PageRequest.of(page, limit, Sort.by("promotionPrice")));
+				break;
+			case "PriceDESC":
+				list = productService.findAllByCategorieIdAndBrandId(categoryId,brandId,
+						PageRequest.of(page, limit, Sort.by("promotionPrice").descending()));
+				break;
+			default:
+				list = productService.findAllByCategorieIdAndBrandId(categoryId,brandId, PageRequest.of(page, limit));
+				break;
+			}
+		} else if (brandId != 0) {
+			switch (sortBy) {
+			case "createdAtDESC":
+				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit, Sort.by("createdAt").descending()));
+//				list = productService.findAllByCategorieIdAndBrandId(categoryId, brandId, PageRequest.of(page, limit, Sort.by("createdAt").descending()));
 				break;
 			case "PriceASC":
 				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit, Sort.by("promotionPrice")));
@@ -380,11 +400,28 @@ public class ProductController {
 				list = productService.findAllByBrandId(brandId, PageRequest.of(page, limit));
 				break;
 			}
-		} else {
+		} else if (categoryId != 0) {
 			switch (sortBy) {
 			case "createdAtDESC":
-//				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("createdAt").descending()));
-				list = productService.findAllCreatedAtDESC(PageRequest.of(page, limit));
+				list = productService.findAllByCategoryId(categoryId, PageRequest.of(page, limit, Sort.by("createdAt").descending()));
+				break;
+			case "PriceASC":
+				list = productService.findAllByCategoryId(categoryId, PageRequest.of(page, limit, Sort.by("promotionPrice")));
+				break;
+			case "PriceDESC":
+				list = productService.findAllByCategoryId(categoryId,
+						PageRequest.of(page, limit, Sort.by("promotionPrice").descending()));
+				break;
+			default:
+				list = productService.findAllByCategoryId(categoryId, PageRequest.of(page, limit));
+				break;
+			}
+		}
+		else {
+			switch (sortBy) {
+			case "createdAtDESC":
+				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("createdAt").descending()));
+//				list = productService.findAllCreatedAtDESC(PageRequest.of(page, limit));
 				break;
 			case "PriceASC":
 				list = productService.findAllPage(PageRequest.of(page, limit, Sort.by("promotionPrice")));
@@ -418,6 +455,13 @@ public class ProductController {
 			}
 			product.setMoreImage(moreImage.substring(0, moreImage.length() - 1));
 		}
+		
+		
+//		List<Product> listActive = new ArrayList<Product>();
+//		for (Product product : list) {
+//			if(product.getIsActive()==true) listActive.add(product);
+//		}
+//		
 		ResponseObject resposeObject = new ResponseObject("success", "find all Product success", list);
 		resposeObject.setCount(count);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import shop.entity.Article;
+import shop.entity.Product;
 
 public interface ArticleService {
 
@@ -23,6 +24,11 @@ public interface ArticleService {
 	List<Article> findAllAndPage(Pageable pageable);
 
 	List<Article> findAllByNameAndPage(String name, Pageable pageable);
+	
+
+	List<Article> findAllByCategoryArticleId(int categoryArticleId, Pageable pageable);
+	
+	List<Article> filterAndPage(String name, int categoryArticleId, Pageable pageable);
 
 
 }

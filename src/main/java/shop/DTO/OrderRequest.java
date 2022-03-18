@@ -6,7 +6,7 @@ public class OrderRequest {
 
 	private int userId;
 
-//	private int voucherId;
+	private int voucherId;
 
 	private int paymentId;
 	
@@ -215,6 +215,14 @@ public class OrderRequest {
 
 	public void setEmailReceiver(String emailReceiver) {
 		this.emailReceiver = emailReceiver;
+	}
+
+	public int getVoucherId() {
+		return voucherId;
+	}
+
+	public void setVoucherId(int voucherId) {
+		this.voucherId = voucherId;
 	}
 	
 	

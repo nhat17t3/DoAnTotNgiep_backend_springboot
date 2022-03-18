@@ -34,5 +34,7 @@ public interface ProductService {
 	
 	List<Product> findAllByBrandId(int brandId, Pageable pageable);
 
-	List<Product> findAllByCategorieId(int categoryId, Pageable pageable);
+	List<Product> findAllByCategoryId(int categoryId, Pageable pageable);
+	
+	List<Product> findAllByCategorieIdAndBrandId(int categoryId,int brandId, Pageable pageable);
 }

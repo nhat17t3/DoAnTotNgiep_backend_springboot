@@ -3,6 +3,7 @@ package shop.service;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import shop.entity.Order;
 
@@ -27,5 +28,7 @@ public interface OrderService {
 	List<Order> findAllByUserId(int userID, Pageable pageable);
 
 	List<Order> findAllByStatus(int status, Pageable pageable);
+	
+	List<Order> filterAndPage( String key,  int status, Pageable pageable);
 
 }

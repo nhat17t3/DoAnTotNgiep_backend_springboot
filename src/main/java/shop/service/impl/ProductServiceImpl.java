@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public List<Product> findAllByCategorieId(int categoryId, Pageable pageable) {
+	public List<Product> findAllByCategoryId(int categoryId, Pageable pageable) {
 		// TODO Auto-generated method stub
 		return productRepository.findAllByCategoryId(categoryId, pageable);
 	}
@@ -89,6 +89,12 @@ public class ProductServiceImpl implements ProductService{
 	public Long count() {
 		// TODO Auto-generated method stub
 		return productRepository.count();
+	}
+
+	@Override
+	public List<Product> findAllByCategorieIdAndBrandId(int categoryId, int brandId, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return productRepository.findAllByCategoryIdAndBrandId(categoryId, brandId, pageable);
 	}
 
 

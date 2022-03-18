@@ -1,6 +1,7 @@
 package shop.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import shop.DTO.OrderDetailRequest;
 import shop.DTO.OrderRequest;
 import shop.DTO.ResponseObject;
+import shop.entity.Article;
 import shop.entity.Order;
 import shop.entity.OrderDetail;
+import shop.entity.Product;
+import shop.entity.Voucher;
 import shop.service.OrderDetailService;
 import shop.service.OrderService;
 import shop.service.PaymentService;
@@ -31,6 +36,7 @@ import shop.service.PaymentService;
 import shop.service.ProductService;
 import shop.service.UserService;
 //import shop.service.VoucherService;
+import shop.service.VoucherService;
 
 @RestController
 @RequestMapping("/api")
@@ -45,8 +51,8 @@ public class OrderController {
 	@Autowired
 	PaymentService paymentService;
 
-//	@Autowired
-//	VoucherService voucherService;
+	@Autowired
+	VoucherService voucherService;
 
 	@Autowired
 	ProductService productService;
@@ -109,6 +115,18 @@ public class OrderController {
 		}
 
 //		item.setOrderDetails(orderDetails);
+		
+		if(form.getVoucherId()!= 0) {
+			Voucher voucher =voucherService.findById(form.getVoucherId());
+			voucher.setQuantity(voucher.getQuantity()-1);
+			Voucher save = voucherService.save(voucher);
+		}
+		
+//		for (OrderDetail itemOrder : newItem.getOrderDetails()) {
+//			Product product = productService.findById(itemOrder.getProduct().getId())  ;
+//			product.setInstock(product.getInstock()-itemOrder.getQuantity());
+//			Product save1 = productService.save(product);
+//		}
 
 		ResponseObject resposeObject = new ResponseObject("success", "create Order success", newItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.CREATED);
@@ -131,6 +149,15 @@ public class OrderController {
 		if(form.getStatus() != null) item.setStatus(form.getStatus());;
 
 		Order updateItem = orderService.save(item);
+		
+		if(updateItem.getStatus()==1) {
+			for (OrderDetail itemOrder : updateItem.getOrderDetails()) {
+				Product product = productService.findById(itemOrder.getProduct().getId())  ;
+				product.setInstock(product.getInstock()-1);
+				Product save = productService.save(product);
+			}
+		}
+			
 		ResponseObject resposeObject = new ResponseObject("success", "update Order success", updateItem);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -158,6 +185,29 @@ public class OrderController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "search Order by name  ", listCate);
+		resposeObject.setCount(orderService.count());
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
+	
+	@GetMapping("/orders/filter1")
+	public ResponseEntity<ResponseObject> filterAndPage(
+			@RequestParam(value = "limit", required = false) int limit,
+			@RequestParam(value = "page", required = false) int page,
+			@RequestParam(defaultValue = "default", required = false) String key,
+			@RequestParam(defaultValue = "0", required = false) int status) {
+		Pageable pageable = PageRequest.of(page, limit);
+		
+		List<Order> list = new ArrayList<Order>();
+		if(key!="default" && status !=0) {
+			list = orderService.filterAndPage(key, status, pageable);
+		}
+		else if (key!="default") list = orderService.findAllByNameOrPhoneReceiver(key, pageable);
+		else if(status != 0) list = orderService.findAllByStatus(status, pageable);
+		else list= orderService.findAllPage(pageable);
+//		if (listCate.isEmpty()) {
+//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//		}
+		ResponseObject resposeObject = new ResponseObject("success", "search Order by name  ", list);
 		resposeObject.setCount(orderService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
@@ -196,6 +246,36 @@ public class OrderController {
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll Order by Status Order", listCate);
 		resposeObject.setCount(orderService.count());
+		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
+	}
+	
+	@GetMapping("/cart/update")
+	public ResponseEntity<ResponseObject> getCart( @RequestParam Set<Integer> products) {
+		
+		
+		Set<Product> newList = new HashSet<Product>();
+		for (Integer itemId : products) {
+			Product product = productService.findById(itemId);
+			if(product != null) newList.add(product);
+		}
+		
+		for (Product product : newList) {
+			String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+					.path(product.getImage()).toUriString();
+			product.setImage(fileDownloadUri);
+
+			String moreImage = "";
+			for (String image : product.getMoreImage().split(",")) {
+				String fileDownloadUri1 = ServletUriComponentsBuilder.fromCurrentContextPath().path("/files/")
+						.path(image).toUriString();
+				System.out.println(fileDownloadUri1);
+				moreImage = moreImage.concat(fileDownloadUri1).concat(",");
+			}
+			product.setMoreImage(moreImage.substring(0, moreImage.length() - 1));
+		}
+		
+		
+		ResponseObject resposeObject = new ResponseObject("success", "get cart", newList);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 }

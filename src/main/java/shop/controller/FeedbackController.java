@@ -96,6 +96,7 @@ public class FeedbackController {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
 		ResponseObject resposeObject = new ResponseObject("success", "findAll feedback by page", list);
+		resposeObject.setCount(feedbackService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}
 //

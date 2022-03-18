@@ -20,5 +20,7 @@ public interface FeedbackService {
 	List<Feedback> findAllPage(Pageable pageable);
 	
 //	List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable);
+	
+	Long count();
 
 }

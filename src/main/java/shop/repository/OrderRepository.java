@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import shop.entity.Article;
 import shop.entity.Order;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
@@ -22,4 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 	List<Order> findAllByUserId(int userID, Pageable pageable);
 
 	List<Order> findAllByStatus(int status, Pageable pageable);
+	
+	@Query("SELECT e FROM Order e  WHERE e.status = :status AND e.nameReceiver LIKE  %:key%  ORDER BY e.id ")
+	List<Order> filterAndPage(@Param("key") String key, @Param("status") int status, Pageable pageable);
 }

@@ -70,16 +70,21 @@ public class RevenueController {
 		a.setTotalUser(userService.count());
 		a.setTotalProduct(productService.count());
 		a.setTotalOrder(orderService.count());
-		double totalRevenue = 0;
+		Double totalRevenue = (double) 0;
 		List<Order> listOrder = orderService.findAll();
+		System.out.println("bbbbbbb");
 		for (Order order : listOrder) {
-			if (order.getStatus()==3) totalRevenue += order.getTotal();				
+			if (order.getStatus()==3) totalRevenue += order.getTotal();	
+			System.out.println("ccccccccc");
 		}
-		a.setTotalRevenue(totalRevenue);
 		
-		for (Order order : listOrder) {
-			if (order.getStatus()==3) totalRevenue += order.getTotal();				
-		}
+		
+		System.out.println("oooooo");
+		a.setTotalRevenue(totalRevenue);
+		System.out.println("kkkkkkk");
+		
+		
+		
 		
 		ResponseObject resposeObject = new ResponseObject("success", "thong ke so lieu phan tu", a);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
@@ -110,7 +115,7 @@ public class RevenueController {
 			LocalDateTime end = LocalDateTime.of(year, i, day, 1, 1);
 			double totalMonth = 0;
 			for (Order order : listOrder) {
-				if (order.getStatus()==3 && order.getCreatedAt().isBefore(end) && order.getCancleAt().isAfter(start)) 
+				if (order.getStatus()==3 && order.getCreatedAt().isBefore(end) && order.getCreatedAt().isAfter(start)) 
 					totalMonth += order.getTotal();				
 			}
 			b.add(totalMonth);

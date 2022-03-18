@@ -1,6 +1,7 @@
 package shop.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import shop.DTO.ResponseObject;
+import shop.entity.Article;
 import shop.entity.Payment;
 import shop.service.PaymentService;
 
@@ -33,6 +35,9 @@ public class PaymentController {
 //		if (list.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //		}
+		
+		
+		
 		ResponseObject resposeObject = new ResponseObject("success", "find all Payment success", list);
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);
 	}

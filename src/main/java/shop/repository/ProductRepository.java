@@ -11,10 +11,14 @@ import shop.entity.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
-	@Query("SELECT e FROM Product e ORDER BY e.id ASC")
+//	@Query("SELECT e FROM Product e ORDER BY e.id ASC")
+//	List<Product> findAllPage(Pageable pageable);
+	
+	
+	@Query("SELECT e FROM Product e")
 	List<Product> findAllPage(Pageable pageable);
 	
-	@Query("SELECT e FROM Product e ORDER BY e.createdAt DESC")
+	@Query("SELECT e FROM Product e ORDER BY e.createdAt ASC")
 	List<Product> findAllCreatedAtDESC(Pageable pageable);
 	
 	@Query("SELECT e FROM Product e ORDER BY e.promotionPrice ASC")
@@ -30,6 +34,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	List<Product> findAllByBrandId(int brandId, Pageable pageable);
 	
 	List<Product> findAllByCategoryId(int categoryId, Pageable pageable);
+	
+	List<Product> findAllByCategoryIdAndBrandId(int categoryId,int brandId, Pageable pageable);
 
 //	@Query("  SELECT m FROM Product m JOIN m.categories mg WHERE mg.id = :categoryId  ")
 //	List<Product> findAllByCategorieId(int categoryId, Pageable pageable);

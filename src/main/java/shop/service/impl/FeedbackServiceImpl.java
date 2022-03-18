@@ -48,6 +48,12 @@ public class FeedbackServiceImpl implements FeedbackService{
 		return feedbackRepository.findAllPage(pageable);
 	}
 
+	@Override
+	public Long count() {
+		// TODO Auto-generated method stub
+		return feedbackRepository.count();
+	}
+
 //	@Override
 //	public List<Feedback> findAllByIsRead(boolean isRead, Pageable pageable) {
 //		// TODO Auto-generated method stub
