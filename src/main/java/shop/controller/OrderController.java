@@ -96,6 +96,7 @@ public class OrderController {
 		item.setDiscount(form.getDiscount());
 		item.setShippingFee(form.getShippingFee());
 		item.setNote(form.getNote());
+		item.setStatus(form.getStatus());
 		item.setCreatedAt(LocalDateTime.now());
 		;
 
