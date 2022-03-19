@@ -193,20 +193,18 @@ public class OrderController {
 	public ResponseEntity<ResponseObject> filterAndPage(
 			@RequestParam(value = "limit", required = false) int limit,
 			@RequestParam(value = "page", required = false) int page,
-			@RequestParam(defaultValue = "default", required = false) String key,
-			@RequestParam(defaultValue = "0", required = false) int status) {
+			@RequestParam String key,
+			@RequestParam(defaultValue = "5", required = false) int status) {
 		Pageable pageable = PageRequest.of(page, limit);
 		
 		List<Order> list = new ArrayList<Order>();
-		if(key!="default" && status !=0) {
+		if( status !=5) {
 			list = orderService.filterAndPage(key, status, pageable);
 		}
-		else if (key!="default") list = orderService.findAllByNameOrPhoneReceiver(key, pageable);
-		else if(status != 0) list = orderService.findAllByStatus(status, pageable);
-		else list= orderService.findAllPage(pageable);
-//		if (listCate.isEmpty()) {
-//			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//		}
+		else list = orderService.findAllByNameOrPhoneReceiver(key, pageable);
+//		else if(status != 0) list = orderService.findAllByStatus(status, pageable);
+//		else list= orderService.findAllPage(pageable);
+
 		ResponseObject resposeObject = new ResponseObject("success", "search Order by name  ", list);
 		resposeObject.setCount(orderService.count());
 		return new ResponseEntity<>(resposeObject, HttpStatus.OK);

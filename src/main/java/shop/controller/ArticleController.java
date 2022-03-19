@@ -178,18 +178,26 @@ public class ArticleController {
 	public ResponseEntity<ResponseObject> filterAndPage(
 			@RequestParam(value = "limit", required = false) int limit,
 			@RequestParam(value = "page", required = false) int page,
-			@RequestParam(defaultValue = "default", required = false) String name,
+			@RequestParam( required = true) String name,
 			@RequestParam(defaultValue = "0", required = false) int categoryArticleId) {
 		Pageable pageable = PageRequest.of(page, limit);
 		
 		List<Article> list = new ArrayList<Article>();
 		
-		if(name!="default" && categoryArticleId !=0) {
+		if(categoryArticleId !=0) {
+			System.out.println("aaa");
 			list = articleService.filterAndPage(name, categoryArticleId, pageable);
 		}
-		else if (name!="default") list = articleService.findAllByNameAndPage(name, pageable);
-		else if(categoryArticleId != 0) list = articleService.findAllByCategoryArticleId(categoryArticleId, pageable);
-		else list = articleService.findAllAndPage(pageable);
+		else  {
+			System.out.println("bbbbb");
+			list = articleService.findAllByNameAndPage(name, pageable);
+		}
+		
+//		else if(categoryArticleId != 0) {
+//			System.out.println("cccc");
+//			list = articleService.findAllByCategoryArticleId(categoryArticleId, pageable);
+//		}
+//		else list = articleService.findAllAndPage(pageable);
 		
 		long count = articleService.count();
 		
