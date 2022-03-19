@@ -13,7 +13,7 @@ import shop.entity.User;
 public interface UserRepository extends JpaRepository<User, Integer> {
 	
 //	find all / sort by id / paging
-	@Query("SELECT e FROM User e ORDER BY e.id ASC")
+	@Query("SELECT e FROM User e ORDER BY e.createdAt DESC")
 	List<User> findAllAndPage(Pageable pageable);
 
 //	search by name /sort by id/ paging

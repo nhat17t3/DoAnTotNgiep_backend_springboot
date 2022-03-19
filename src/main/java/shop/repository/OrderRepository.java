@@ -24,6 +24,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
 	List<Order> findAllByStatus(int status, Pageable pageable);
 	
-	@Query("SELECT e FROM Order e  WHERE e.status = :status AND e.nameReceiver LIKE  %:key%  ORDER BY e.id ")
+	@Query("SELECT e FROM Order e  WHERE e.status = :status AND e.nameReceiver LIKE  %:key%  ORDER BY e.createdAt DESC ")
 	List<Order> filterAndPage(@Param("key") String key, @Param("status") int status, Pageable pageable);
 }
