@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 //	List<Product> findAllPage(Pageable pageable);
 	
 	
-	@Query("SELECT e FROM Product e ORDER BY e.id")
+	@Query("SELECT e FROM Product e ")
 	List<Product> findAllPage(Pageable pageable);
 	
 	@Query("SELECT e FROM Product e ORDER BY e.createdAt ASC")

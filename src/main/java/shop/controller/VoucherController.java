@@ -76,6 +76,7 @@ public class VoucherController {
 		item.setMinOrderValue(form.getMinOrderValue());
 		item.setMaxPrice(form.getMaxPrice());
 		item.setValue(form.getValue());
+		item.setQuantity(form.getQuantity());
 		item.setStartAt(form.getStartAt());
 		item.setEndAt(form.getEndAt());
 		item.setIsActive(form.getIsActive());

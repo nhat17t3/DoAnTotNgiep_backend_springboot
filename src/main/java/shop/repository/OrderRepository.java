@@ -17,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 	List<Order> findAllPage(Pageable pageable);
 
 //	search by name /sort by id/ paging
-	@Query("SELECT e FROM Order e WHERE e.nameReceiver LIKE  %:key% OR e.phoneReceiver LIKE %:key% ORDER BY e.id ")
+	@Query("SELECT e FROM Order e WHERE e.nameReceiver LIKE  %:key% OR e.phoneReceiver LIKE %:key% ORDER BY e.createdAt DESC ")
 	List<Order> findAllByNameOrPhoneReceiver(@Param("key") String key, Pageable pageable);
 
 	List<Order> findAllByUserId(int userID, Pageable pageable);
