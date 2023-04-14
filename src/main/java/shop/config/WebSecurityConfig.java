@@ -114,8 +114,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         config.setAllowCredentials(true);
 //        config.setAllowedOrigins(Arrays.asList("*"));
         config.addAllowedOrigin("*");
-       // config.addAllowedOrigin("http://localhost:3000");
-       // config.addAllowedOrigin("http://localhost:3001");
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:3001");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
